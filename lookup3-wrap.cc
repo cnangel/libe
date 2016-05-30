@@ -35,19 +35,19 @@
 extern "C"
 {
 
-void
-hashlittle2(const void* key, size_t length, uint32_t* pc, uint32_t* pb);
+	void
+	hashlittle2(const void *key, size_t length, uint32_t *pc, uint32_t *pb);
 
 } // extern "C"
 
 uint64_t
 e :: lookup3_64(uint64_t in)
 {
-    uint32_t pc = 0;
-    uint32_t pb = 0;
-    hashlittle2(&in, sizeof(in), &pc, &pb);
-    uint64_t out = pc;
-    out <<= 32;
-    out |= pb;
-    return out;
+	uint32_t pc = 0;
+	uint32_t pb = 0;
+	hashlittle2(&in, sizeof(in), &pc, &pb);
+	uint64_t out = pc;
+	out <<= 32;
+	out |= pb;
+	return out;
 }

@@ -36,234 +36,220 @@ namespace
 
 class foo
 {
-    public:
-        foo()
-            : m_ref(0)
-        {
-        }
+public:
+	foo()
+		: m_ref(0)
+	{
+	}
 
-    private:
-        friend class e::intrusive_ptr<foo>;
+private:
+	friend class e::intrusive_ptr<foo>;
 
-    private:
+private:
 #ifdef _MSC_VER
-		void inc() { System::Threading::Interlocked::Increment(m_ref); }
-		void dec() { if(System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
+	void inc() { System::Threading::Interlocked::Increment(m_ref); }
+	void dec() { if (System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
 #else
-        void inc() { __sync_add_and_fetch(&m_ref, 1); }
-        void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
+	void inc() { __sync_add_and_fetch(&m_ref, 1); }
+	void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
 #endif
 
-    private:
-        size_t m_ref;
+private:
+	size_t m_ref;
 };
 
 TEST(IntrusivePtr, CtorAndDtor)
 {
-    e::intrusive_ptr<foo> a;
-    e::intrusive_ptr<foo> b(new foo());
-    e::intrusive_ptr<foo> c(b);
+	e::intrusive_ptr<foo> a;
+	e::intrusive_ptr<foo> b(new foo());
+	e::intrusive_ptr<foo> c(b);
 }
 
 class ctordtor
 {
-    public:
-        ctordtor(bool& ctor, bool& dtor)
-            : m_ref(0)
-            , m_ctor(ctor)
-            , m_dtor(dtor)
-        {
-            m_ctor = true;
-        }
+public:
+	ctordtor(bool &ctor, bool &dtor)
+		: m_ref(0)
+		, m_ctor(ctor)
+		, m_dtor(dtor)
+	{
+		m_ctor = true;
+	}
 
-        ~ctordtor() throw ()
-        {
-            m_dtor = true;
-        }
+	~ctordtor() throw ()
+	{
+		m_dtor = true;
+	}
 
-    public:
+public:
 #ifdef _MSC_VER
-		void inc() { System::Threading::Interlocked::Increment(m_ref); }
-		void dec() { if(System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
+	void inc() { System::Threading::Interlocked::Increment(m_ref); }
+	void dec() { if (System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
 #else
-        void inc() { __sync_add_and_fetch(&m_ref, 1); }
-        void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
+	void inc() { __sync_add_and_fetch(&m_ref, 1); }
+	void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
 #endif
 
-    public:
-        size_t m_ref;
-        bool& m_ctor;
-        bool& m_dtor;
+public:
+	size_t m_ref;
+	bool &m_ctor;
+	bool &m_dtor;
 };
 
 TEST(IntrusivePtr, Nesting)
 {
-    bool ctor = false;
-    bool dtor = false;
-    ASSERT_FALSE(ctor);
-    ASSERT_FALSE(dtor);
-
-    {
-        e::intrusive_ptr<ctordtor> a(new ctordtor(ctor, dtor));
-        ASSERT_TRUE(ctor);
-        ASSERT_FALSE(dtor);
-
-        {
-            e::intrusive_ptr<ctordtor> b(a);
-            ASSERT_TRUE(ctor);
-            ASSERT_FALSE(dtor);
-
-            {
-                e::intrusive_ptr<ctordtor> c(b);
-                ASSERT_TRUE(ctor);
-                ASSERT_FALSE(dtor);
-
-                {
-                    e::intrusive_ptr<ctordtor> d(c);
-                    ASSERT_TRUE(ctor);
-                    ASSERT_FALSE(dtor);
-                }
-
-                ASSERT_TRUE(ctor);
-                ASSERT_FALSE(dtor);
-            }
-
-            ASSERT_TRUE(ctor);
-            ASSERT_FALSE(dtor);
-        }
-
-        ASSERT_TRUE(ctor);
-        ASSERT_FALSE(dtor);
-    }
-
-    ASSERT_TRUE(ctor);
-    ASSERT_TRUE(dtor);
+	bool ctor = false;
+	bool dtor = false;
+	ASSERT_FALSE(ctor);
+	ASSERT_FALSE(dtor);
+	{
+		e::intrusive_ptr<ctordtor> a(new ctordtor(ctor, dtor));
+		ASSERT_TRUE(ctor);
+		ASSERT_FALSE(dtor);
+		{
+			e::intrusive_ptr<ctordtor> b(a);
+			ASSERT_TRUE(ctor);
+			ASSERT_FALSE(dtor);
+			{
+				e::intrusive_ptr<ctordtor> c(b);
+				ASSERT_TRUE(ctor);
+				ASSERT_FALSE(dtor);
+				{
+					e::intrusive_ptr<ctordtor> d(c);
+					ASSERT_TRUE(ctor);
+					ASSERT_FALSE(dtor);
+				}
+				ASSERT_TRUE(ctor);
+				ASSERT_FALSE(dtor);
+			}
+			ASSERT_TRUE(ctor);
+			ASSERT_FALSE(dtor);
+		}
+		ASSERT_TRUE(ctor);
+		ASSERT_FALSE(dtor);
+	}
+	ASSERT_TRUE(ctor);
+	ASSERT_TRUE(dtor);
 }
 
 class accessing
 {
-    public:
-        accessing(int _a, double _b, char _c) : m_ref(0), a(_a), b(_b), c(_c) {}
+public:
+	accessing(int _a, double _b, char _c) : m_ref(0), a(_a), b(_b), c(_c) {}
 
-    public:
+public:
 #ifdef _MSC_VER
-		void inc() { System::Threading::Interlocked::Increment(m_ref); }
-		void dec() { if(System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
+	void inc() { System::Threading::Interlocked::Increment(m_ref); }
+	void dec() { if (System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
 #else
-        void inc() { __sync_add_and_fetch(&m_ref, 1); }
-        void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
+	void inc() { __sync_add_and_fetch(&m_ref, 1); }
+	void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
 #endif
 
-    public:
-        size_t m_ref;
-        int a;
-        double b;
-        char c;
+public:
+	size_t m_ref;
+	int a;
+	double b;
+	char c;
 };
 
 TEST(IntrusivePtr, Accessing)
 {
-    e::intrusive_ptr<accessing> ptr(new accessing(42, 3.1415, 'A'));
-    ASSERT_EQ(42, (*ptr).a);
-    ASSERT_EQ(42, ptr->a);
-    ASSERT_EQ(3.1415, (*ptr).b);
-    ASSERT_EQ(3.1415, ptr->b);
-    ASSERT_EQ('A', (*ptr).c);
-    ASSERT_EQ('A', ptr->c);
+	e::intrusive_ptr<accessing> ptr(new accessing(42, 3.1415, 'A'));
+	ASSERT_EQ(42, (*ptr).a);
+	ASSERT_EQ(42, ptr->a);
+	ASSERT_EQ(3.1415, (*ptr).b);
+	ASSERT_EQ(3.1415, ptr->b);
+	ASSERT_EQ('A', (*ptr).c);
+	ASSERT_EQ('A', ptr->c);
 }
 
 class assignment
 {
-    public:
-        assignment() : m_ref(0) {}
+public:
+	assignment() : m_ref(0) {}
 
-    public:
+public:
 #ifdef _MSC_VER
-		void inc() { System::Threading::Interlocked::Increment(m_ref); }
-		void dec() { if(System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
+	void inc() { System::Threading::Interlocked::Increment(m_ref); }
+	void dec() { if (System::Threading::Interlocked::Decrement(m_ref) == 0) delete this; }
 #else
-        void inc() { __sync_add_and_fetch(&m_ref, 1); }
-        void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
+	void inc() { __sync_add_and_fetch(&m_ref, 1); }
+	void dec() { if (__sync_sub_and_fetch(&m_ref, 1) == 0) delete this; }
 #endif
 
-    public:
-        size_t m_ref;
+public:
+	size_t m_ref;
 };
 
 TEST(IntrusivePtr, Assignment)
 {
-    e::intrusive_ptr<assignment> p(new assignment());
-    e::intrusive_ptr<assignment> q;
-    e::intrusive_ptr<assignment> r;
-    ASSERT_EQ(1U, p->m_ref);
-    q = p;
-    ASSERT_EQ(2U, p->m_ref);
-    r = p;
-    ASSERT_EQ(3U, p->m_ref);
-    r = q;
-    ASSERT_EQ(3U, p->m_ref);
+	e::intrusive_ptr<assignment> p(new assignment());
+	e::intrusive_ptr<assignment> q;
+	e::intrusive_ptr<assignment> r;
+	ASSERT_EQ(1U, p->m_ref);
+	q = p;
+	ASSERT_EQ(2U, p->m_ref);
+	r = p;
+	ASSERT_EQ(3U, p->m_ref);
+	r = q;
+	ASSERT_EQ(3U, p->m_ref);
 }
 
 TEST(IntrusivePtr, Booleans)
 {
-    e::intrusive_ptr<assignment> p(new assignment());
-    e::intrusive_ptr<assignment> q;
-
-    if (!p)
-    {
-        FAIL();
-    }
-
-    if (q)
-    {
-        FAIL();
-    }
+	e::intrusive_ptr<assignment> p(new assignment());
+	e::intrusive_ptr<assignment> q;
+	if (!p)
+	{
+		FAIL();
+	}
+	if (q)
+	{
+		FAIL();
+	}
 }
 
 TEST(IntrusivePtr, Compare)
 {
-    e::intrusive_ptr<assignment> p(new assignment());
-    e::intrusive_ptr<assignment> q;
-
-    ASSERT_GT(p, q);
-    ASSERT_GE(p, q);
-    ASSERT_NE(p, q);
-    ASSERT_LE(q, p);
-    ASSERT_LT(q, p);
-
-    p = q;
-    ASSERT_EQ(p, q);
+	e::intrusive_ptr<assignment> p(new assignment());
+	e::intrusive_ptr<assignment> q;
+	ASSERT_GT(p, q);
+	ASSERT_GE(p, q);
+	ASSERT_NE(p, q);
+	ASSERT_LE(q, p);
+	ASSERT_LT(q, p);
+	p = q;
+	ASSERT_EQ(p, q);
 }
 
 struct node
 {
-    node() : ref(0), next(NULL) {}
+	node() : ref(0), next(NULL) {}
 #ifdef _MSC_VER
 	void inc() { System::Threading::Interlocked::Increment(ref); }
-	void dec() { if(System::Threading::Interlocked::Decrement(ref) == 0) delete this; }
+	void dec() { if (System::Threading::Interlocked::Decrement(ref) == 0) delete this; }
 #else
-    void inc() { __sync_add_and_fetch(&ref, 1); }
-    void dec() { if (__sync_sub_and_fetch(&ref, 1) == 0) delete this; }
+	void inc() { __sync_add_and_fetch(&ref, 1); }
+	void dec() { if (__sync_sub_and_fetch(&ref, 1) == 0) delete this; }
 #endif
-    size_t ref;
-    e::intrusive_ptr<node> next;
+	size_t ref;
+	e::intrusive_ptr<node> next;
 };
 
 TEST(IntrusivePtr, HandOverHand)
 {
-    e::intrusive_ptr<node> head(new node());
-
-    for (size_t i = 0; i < 100000; ++i)
-    {
-        e::intrusive_ptr<node> tmp(new node());
-        tmp->next = head;
-        head = tmp;
-    }
-
-    while (head)
-    {
-        head = head->next;
-    }
+	e::intrusive_ptr<node> head(new node());
+	for (size_t i = 0; i < 100000; ++i)
+	{
+		e::intrusive_ptr<node> tmp(new node());
+		tmp->next = head;
+		head = tmp;
+	}
+	while (head)
+	{
+		head = head->next;
+	}
 }
 
 } // namespace

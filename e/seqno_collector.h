@@ -44,34 +44,34 @@ namespace e
 
 class seqno_collector
 {
-    public:
-        seqno_collector(garbage_collector* gc);
-        ~seqno_collector() throw ();
+public:
+	seqno_collector(garbage_collector *gc);
+	~seqno_collector() throw ();
 
-    public:
-        void collect(uint64_t seqno);
-        void collect_up_to(uint64_t seqno);
-        void lower_bound(uint64_t* seqno);
+public:
+	void collect(uint64_t seqno);
+	void collect_up_to(uint64_t seqno);
+	void lower_bound(uint64_t *seqno);
 
-    private:
-        struct run;
+private:
+	struct run;
 
-    private:
-        run* get_run(uint64_t idx);
-        void collect(uint64_t seqno, uint64_t idx, run* r);
-        void compress(uint64_t idx, run* r);
-        void set_hint(uint64_t idx);
+private:
+	run *get_run(uint64_t idx);
+	void collect(uint64_t seqno, uint64_t idx, run *r);
+	void compress(uint64_t idx, run *r);
+	void set_hint(uint64_t idx);
 
-    private:
-        static uint64_t id(const uint64_t& x) { return x; }
-        typedef nwf_hash_map<uint64_t, run*, id> run_map_t;
-        garbage_collector* m_gc;
-        run_map_t m_runs;
-        uint64_t m_lb_hint;
+private:
+	static uint64_t id(const uint64_t &x) { return x; }
+	typedef nwf_hash_map<uint64_t, run *, id> run_map_t;
+	garbage_collector *m_gc;
+	run_map_t m_runs;
+	uint64_t m_lb_hint;
 
-    private:
-        seqno_collector(const seqno_collector&);
-        seqno_collector& operator = (const seqno_collector&);
+private:
+	seqno_collector(const seqno_collector &);
+	seqno_collector &operator = (const seqno_collector &);
 };
 
 } // namespace e

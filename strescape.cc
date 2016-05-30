@@ -35,61 +35,59 @@
 #include "e/strescape.h"
 
 std::string
-e :: strescape(const std::string& input)
+e :: strescape(const std::string &input)
 {
-    const char* data = input.c_str();
-    size_t data_sz = input.size();
-    std::vector<char> tmp(data_sz * 4 + 1);
-    char* ptr = &tmp.front();
-
-    for (size_t i = 0; i < data_sz; ++i)
-    {
-        if (isalnum(data[i]) ||
-            (ispunct(data[i]) && data[i] != '\'') ||
-            data[i] == ' ')
-        {
-            *ptr = data[i];
-            ++ptr;
-        }
-        else if (data[i] == '\n')
-        {
-            *ptr = '\\';
-            ++ptr;
-            *ptr = 'n';
-            ++ptr;
-        }
-        else if (data[i] == '\r')
-        {
-            *ptr = '\\';
-            ++ptr;
-            *ptr = 'r';
-            ++ptr;
-        }
-        else if (data[i] == '\t')
-        {
-            *ptr = '\\';
-            ++ptr;
-            *ptr = 't';
-            ++ptr;
-        }
-        else if (data[i] == '\'')
-        {
-            *ptr = '\\';
-            ++ptr;
-            *ptr = '\'';
-            ++ptr;
-        }
-        else
-        {
-            *ptr = '\\';
-            ++ptr;
-            *ptr = 'x';
-            ++ptr;
-            sprintf(ptr, "%02x", data[i] & 0xff);
-            ptr += 2;
-        }
-    }
-
-    *ptr = '\0';
-    return std::string(&tmp.front(), ptr);
+	const char *data = input.c_str();
+	size_t data_sz = input.size();
+	std::vector<char> tmp(data_sz * 4 + 1);
+	char *ptr = &tmp.front();
+	for (size_t i = 0; i < data_sz; ++i)
+	{
+		if (isalnum(data[i]) ||
+		    (ispunct(data[i]) && data[i] != '\'') ||
+		    data[i] == ' ')
+		{
+			*ptr = data[i];
+			++ptr;
+		}
+		else if (data[i] == '\n')
+		{
+			*ptr = '\\';
+			++ptr;
+			*ptr = 'n';
+			++ptr;
+		}
+		else if (data[i] == '\r')
+		{
+			*ptr = '\\';
+			++ptr;
+			*ptr = 'r';
+			++ptr;
+		}
+		else if (data[i] == '\t')
+		{
+			*ptr = '\\';
+			++ptr;
+			*ptr = 't';
+			++ptr;
+		}
+		else if (data[i] == '\'')
+		{
+			*ptr = '\\';
+			++ptr;
+			*ptr = '\'';
+			++ptr;
+		}
+		else
+		{
+			*ptr = '\\';
+			++ptr;
+			*ptr = 'x';
+			++ptr;
+			sprintf(ptr, "%02x", data[i] & 0xff);
+			ptr += 2;
+		}
+	}
+	*ptr = '\0';
+	return std::string(&tmp.front(), ptr);
 }

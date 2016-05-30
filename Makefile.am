@@ -11,6 +11,13 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libe.pc
 
 nobase_include_HEADERS =
+nobase_include_HEADERS += e/convert.h
+nobase_include_HEADERS += e/envconfig.h
+nobase_include_HEADERS += e/lockfree_hash_set.h
+nobase_include_HEADERS += e/locking_fifo.h
+nobase_include_HEADERS += e/nonblocking_bounded_fifo.h
+nobase_include_HEADERS += e/striped_lock.h
+nobase_include_HEADERS += e/time.h
 nobase_include_HEADERS += e/ao_hash_map.h
 nobase_include_HEADERS += e/arena.h
 nobase_include_HEADERS += e/array_ptr.h

@@ -68,145 +68,142 @@ template <typename T>
 class intrusive_ptr;
 
 template <typename T>
-std::ostream&
-operator << (std::ostream& lhs, const intrusive_ptr<T>& rhs);
+std::ostream &
+operator << (std::ostream &lhs, const intrusive_ptr<T> &rhs);
 
 template <typename T>
 class intrusive_ptr
 {
-    public:
-        intrusive_ptr() throw ()
-            : m_ptr(0)
-        {
-        }
+public:
+	intrusive_ptr() throw ()
+		: m_ptr(0)
+	{
+	}
 
-        intrusive_ptr(T* ptr) throw ()
-            : m_ptr(ptr)
-        {
-            if (m_ptr)
-            {
-                m_ptr->inc();
-            }
-        }
+	intrusive_ptr(T *ptr) throw ()
+		: m_ptr(ptr)
+	{
+		if (m_ptr)
+		{
+			m_ptr->inc();
+		}
+	}
 
-        intrusive_ptr(const intrusive_ptr<T>& rhs) throw ()
-            : m_ptr(rhs.m_ptr)
-        {
-            if (m_ptr)
-            {
-                m_ptr->inc();
-            }
-        }
+	intrusive_ptr(const intrusive_ptr<T> &rhs) throw ()
+		: m_ptr(rhs.m_ptr)
+	{
+		if (m_ptr)
+		{
+			m_ptr->inc();
+		}
+	}
 
-        ~intrusive_ptr() throw ()
-        {
-            if (m_ptr)
-            {
-                m_ptr->dec();
-            }
-        }
+	~intrusive_ptr() throw ()
+	{
+		if (m_ptr)
+		{
+			m_ptr->dec();
+		}
+	}
 
-    public:
-        T*
-        get() const throw ()
-        {
-            return m_ptr;
-        }
+public:
+	T *
+	get() const throw ()
+	{
+		return m_ptr;
+	}
 
-    public:
-        intrusive_ptr<T>&
-        operator = (const intrusive_ptr<T>& rhs) throw ()
-        {
-            if (m_ptr != rhs.m_ptr)
-            {
-                if (rhs.m_ptr)
-                {
-                    rhs->inc();
-                }
+public:
+	intrusive_ptr<T> &
+	operator = (const intrusive_ptr<T> &rhs) throw ()
+	{
+		if (m_ptr != rhs.m_ptr)
+		{
+			if (rhs.m_ptr)
+			{
+				rhs->inc();
+			}
+			T *tmp = m_ptr;
+			m_ptr = rhs.m_ptr;
+			if (tmp)
+			{
+				tmp->dec();
+			}
+		}
+		return *this;
+	}
 
-                T* tmp = m_ptr;
-                m_ptr = rhs.m_ptr;
+	T &
+	operator * () const throw()
+	{
+		return *m_ptr;
+	}
 
-                if (tmp)
-                {
-                    tmp->dec();
-                }
-            }
+	T *
+	operator -> () const throw()
+	{
+		return m_ptr;
+	}
 
-            return *this;
-        }
+	// Trick from the tr1 shared_ptr impl.
+private:
+	typedef T *intrusive_ptr<T>::*bool_type;
 
-        T&
-        operator * () const throw()
-        {
-            return *m_ptr;
-        }
+public:
+	operator bool_type () const
+	{
+		return m_ptr == 0 ? 0 : &intrusive_ptr<T>::m_ptr;
+	}
 
-        T*
-        operator -> () const throw()
-        {
-            return m_ptr;
-        }
+	bool
+	operator < (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr < rhs.m_ptr;
+	}
 
-    // Trick from the tr1 shared_ptr impl.
-    private:
-        typedef T* intrusive_ptr<T>::*bool_type;
+	bool
+	operator <= (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr <= rhs.m_ptr;
+	}
 
-    public:
-        operator bool_type () const
-        {
-            return m_ptr == 0 ? 0 : &intrusive_ptr<T>::m_ptr;
-        }
+	bool
+	operator == (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr == rhs.m_ptr;
+	}
 
-        bool
-        operator < (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr < rhs.m_ptr;
-        }
+	bool
+	operator != (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr != rhs.m_ptr;
+	}
 
-        bool
-        operator <= (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr <= rhs.m_ptr;
-        }
+	bool
+	operator >= (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr >= rhs.m_ptr;
+	}
 
-        bool
-        operator == (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr == rhs.m_ptr;
-        }
+	bool
+	operator > (const intrusive_ptr<T> &rhs) const
+	{
+		return m_ptr > rhs.m_ptr;
+	}
 
-        bool
-        operator != (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr != rhs.m_ptr;
-        }
+private:
+	friend std::ostream &operator << <>(std::ostream &lhs, const intrusive_ptr<T> &rhs);
 
-        bool
-        operator >= (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr >= rhs.m_ptr;
-        }
-
-        bool
-        operator > (const intrusive_ptr<T>& rhs) const
-        {
-            return m_ptr > rhs.m_ptr;
-        }
-
-    private:
-        friend std::ostream& operator << <>(std::ostream& lhs, const intrusive_ptr<T>& rhs);
-
-    private:
-        T* m_ptr;
+private:
+	T *m_ptr;
 };
 
 template <typename T>
-inline std::ostream&
-operator << (std::ostream& lhs, const intrusive_ptr<T>& rhs)
+inline std::ostream &
+operator << (std::ostream &lhs, const intrusive_ptr<T> &rhs)
 {
-    lhs << rhs.m_ptr;
-    return lhs;
+	lhs << rhs.m_ptr;
+	return lhs;
 }
 
 } // namespace e

@@ -52,49 +52,49 @@ namespace bitsteal
 
 template <typename T>
 inline bool
-get(T* t, size_t i)
+get(T *t, size_t i)
 {
-    assert(sizeof(T*) == sizeof(uint64_t));
-    assert(i < 16);
-    uint64_t ret = reinterpret_cast<uint64_t>(t);
-    uint64_t bit = 1;
-    bit <<= i + 48;
-    return ret & bit;
+	assert(sizeof(T *) == sizeof(uint64_t));
+	assert(i < 16);
+	uint64_t ret = reinterpret_cast<uint64_t>(t);
+	uint64_t bit = 1;
+	bit <<= i + 48;
+	return ret & bit;
 }
 
 template <typename T>
-inline T*
-set(T* t, size_t i)
+inline T *
+set(T *t, size_t i)
 {
-    assert(sizeof(T*) == sizeof(uint64_t));
-    assert(i < 16);
-    uint64_t ret = reinterpret_cast<uint64_t>(t);
-    uint64_t bit = 1;
-    bit <<= i + 48;
-    ret |= bit;
-    return reinterpret_cast<T*>(ret);
+	assert(sizeof(T *) == sizeof(uint64_t));
+	assert(i < 16);
+	uint64_t ret = reinterpret_cast<uint64_t>(t);
+	uint64_t bit = 1;
+	bit <<= i + 48;
+	ret |= bit;
+	return reinterpret_cast<T *>(ret);
 }
 
 template <typename T>
-inline T*
-strip(T* t)
+inline T *
+strip(T *t)
 {
-    assert(sizeof(T*) == sizeof(uint64_t));
-    uint64_t ret = reinterpret_cast<uint64_t>(t);
-    return reinterpret_cast<T*>(0x0000ffffffffffff & ret);
+	assert(sizeof(T *) == sizeof(uint64_t));
+	uint64_t ret = reinterpret_cast<uint64_t>(t);
+	return reinterpret_cast<T *>(0x0000ffffffffffff & ret);
 }
 
 template <typename T>
-inline T*
-unset(T* t, size_t i)
+inline T *
+unset(T *t, size_t i)
 {
-    assert(sizeof(T*) == sizeof(uint64_t));
-    assert(i < 16);
-    uint64_t ret = reinterpret_cast<uint64_t>(t);
-    uint64_t bit = 1;
-    bit <<= i + 48;
-    ret &= ~bit;
-    return reinterpret_cast<T*>(ret);
+	assert(sizeof(T *) == sizeof(uint64_t));
+	assert(i < 16);
+	uint64_t ret = reinterpret_cast<uint64_t>(t);
+	uint64_t bit = 1;
+	bit <<= i + 48;
+	ret &= ~bit;
+	return reinterpret_cast<T *>(ret);
 }
 
 } // namespace bitsteal

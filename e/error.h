@@ -43,26 +43,26 @@ namespace e
 
 class error
 {
-    public:
-        error();
-        error(const error&);
-        virtual ~error() throw ();
+public:
+	error();
+	error(const error &);
+	virtual ~error() throw ();
 
-    public:
-        const char* loc();
-        const char* msg();
-        void set_loc(const char* file, size_t line);
-        std::ostream& set_msg();
+public:
+	const char *loc();
+	const char *msg();
+	void set_loc(const char *file, size_t line);
+	std::ostream &set_msg();
 
-    public:
-        error& operator = (const error&);
+public:
+	error &operator = (const error &);
 
-    private:
-        std::ostringstream m_msg;
-        std::string m_msg_s;
-        std::string m_loc_s;
-        const char* m_file;
-        unsigned long m_line;
+private:
+	std::ostringstream m_msg;
+	std::string m_msg_s;
+	std::string m_loc_s;
+	const char *m_file;
+	unsigned long m_line;
 };
 
 } // namespace e

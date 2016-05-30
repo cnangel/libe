@@ -36,27 +36,27 @@ namespace e
 
 class flagfd
 {
-    public:
-        flagfd();
-        ~flagfd() throw ();
+public:
+	flagfd();
+	~flagfd() throw ();
 
-    public:
-        bool valid() const;
-        int error() const;
-        int poll_fd();
-        bool isset();
-        void set();
-        void clear();
+public:
+	bool valid() const;
+	int error() const;
+	int poll_fd();
+	bool isset();
+	void set();
+	void clear();
 
-    private:
-        po6::io::fd m_read;
-        po6::io::fd m_write;
-        bool m_flagged;
-        int m_error;
+private:
+	po6::io::fd m_read;
+	po6::io::fd m_write;
+	bool m_flagged;
+	int m_error;
 
-    private:
-        flagfd(const flagfd&);
-        flagfd& operator = (const flagfd&);
+private:
+	flagfd(const flagfd &);
+	flagfd &operator = (const flagfd &);
 };
 
 } // namespace e

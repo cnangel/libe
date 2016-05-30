@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Robert Escriva
+// Copyright (c) 2011, Robert Escriva
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,40 +25,37 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-// C
-#include <string.h>
-
 // e
 #include "th.h"
-#include "e/pow2.h"
+#include "e/nonblocking_bounded_fifo.h"
 
 namespace
 {
 
-TEST(Pow2Test, Many)
+TEST(NonblockingBoundedFifo, CtorAndDtor)
 {
-	ASSERT_EQ(uint64_t(0), e::next_pow2(0));
-	ASSERT_EQ(uint64_t(1), e::next_pow2(1));
-	ASSERT_EQ(uint64_t(2), e::next_pow2(2));
-	ASSERT_EQ(uint64_t(4), e::next_pow2(3));
-	ASSERT_EQ(uint64_t(4), e::next_pow2(4));
-	for (uint64_t i = 5; i <= 8; ++i) { ASSERT_EQ(8, e::next_pow2(i)); }
-	for (uint64_t i = 9; i <= 16; ++i) { ASSERT_EQ(16, e::next_pow2(i)); }
-	for (uint64_t i = 17; i <= 32; ++i) { ASSERT_EQ(32, e::next_pow2(i)); }
-	ASSERT_EQ(562949953421312ULL, e::next_pow2(281474976710657));
+	e::nonblocking_bounded_fifo<int> nbf(8);
 }
 
-TEST(Pow2Test, IsPow2)
+TEST(NonblockingBoundedFifo, RoundRobin)
 {
-	ASSERT_FALSE(e::is_pow2(0));
-	ASSERT_TRUE(e::is_pow2(1));
-	ASSERT_TRUE(e::is_pow2(2));
-	ASSERT_FALSE(e::is_pow2(3));
-	ASSERT_TRUE(e::is_pow2(4));
-	ASSERT_FALSE(e::is_pow2(5));
-	ASSERT_FALSE(e::is_pow2(6));
-	ASSERT_FALSE(e::is_pow2(7));
-	ASSERT_TRUE(e::is_pow2(8));
+	e::nonblocking_bounded_fifo<size_t> nbf(8);
+	for (size_t i = 0; i < 1000; ++i)
+	{
+		size_t base = i * 8;
+		for (size_t j = 0; j < 8; ++j)
+		{
+			ASSERT_TRUE(nbf.push(base + j));
+		}
+		ASSERT_FALSE(nbf.push(0));
+		for (size_t j = 0; j < 8; ++j)
+		{
+			size_t popped;
+			nbf.pop(&popped);
+			ASSERT_EQ(base + j, popped);
+		}
+		ASSERT_FALSE(nbf.pop(NULL));
+	}
 }
 
 } // namespace

@@ -43,48 +43,48 @@ namespace e
 
 class buffer
 {
-    public:
-        static buffer* create(size_t sz) { return new (sz) buffer(sz); }
-        static buffer* create(const char* buf, size_t sz) { return new (sz) buffer(buf, sz); }
+public:
+	static buffer *create(size_t sz) { return new (sz) buffer(sz); }
+	static buffer *create(const char *buf, size_t sz) { return new (sz) buffer(buf, sz); }
 
-    public:
-        void operator delete (void* mem);
-        ~buffer() throw ();
+public:
+	void operator delete (void *mem);
+	~buffer() throw ();
 
-    public:
-        size_t capacity() const { return m_cap; }
-        size_t size() const { return m_size; }
-        const uint8_t* data() const { return m_data; }
-        const char* cdata() const { return reinterpret_cast<const char*>(m_data); }
-        const uint8_t* end() const { return data() + m_size; }
-        const char* cend() const { return cdata() + m_size; }
-        uint8_t* data() { return m_data; }
-        char* cdata() { return reinterpret_cast<char*>(m_data); }
-        uint8_t* end() { return data() + m_size; }
-        char* cend() { return cdata() + m_size; }
-        bool cmp(const char* buf, size_t sz) const;
-        e::slice as_slice() const { return e::slice(m_data, m_size); }
-        std::string hex() const { return as_slice().hex(); }
-        e::buffer* copy() const;
+public:
+	size_t capacity() const { return m_cap; }
+	size_t size() const { return m_size; }
+	const uint8_t *data() const { return m_data; }
+	const char *cdata() const { return reinterpret_cast<const char *>(m_data); }
+	const uint8_t *end() const { return data() + m_size; }
+	const char *cend() const { return cdata() + m_size; }
+	uint8_t *data() { return m_data; }
+	char *cdata() { return reinterpret_cast<char *>(m_data); }
+	uint8_t *end() { return data() + m_size; }
+	char *cend() { return cdata() + m_size; }
+	bool cmp(const char *buf, size_t sz) const;
+	e::slice as_slice() const { return e::slice(m_data, m_size); }
+	std::string hex() const { return as_slice().hex(); }
+	e::buffer *copy() const;
 
-    public:
-        void resize(size_t size);
+public:
+	void resize(size_t size);
 
-    public:
-        e::packer pack();
-        e::packer pack_at(size_t off);
-        e::unpacker unpack();
-        e::unpacker unpack_from(size_t off);
+public:
+	e::packer pack();
+	e::packer pack_at(size_t off);
+	e::unpacker unpack();
+	e::unpacker unpack_from(size_t off);
 
-    private:
-        void* operator new (size_t sz, size_t num);
-        buffer(size_t sz);
-        buffer(const char* buf, size_t sz);
+private:
+	void *operator new (size_t sz, size_t num);
+	buffer(size_t sz);
+	buffer(const char *buf, size_t sz);
 
-    private:
-        size_t m_cap;
-        size_t m_size;
-        uint8_t m_data[1];
+private:
+	size_t m_cap;
+	size_t m_size;
+	uint8_t m_data[1];
 };
 
 } // namespace e

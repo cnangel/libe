@@ -32,15 +32,15 @@ using e::file_lock_table;
 
 static file_lock_table _neo;
 
-file_lock_table*
+file_lock_table *
 file_lock_table :: the_one_and_only()
 {
-    return &_neo;
+	return &_neo;
 }
 
 file_lock_table :: file_lock_table()
-    : m_mtx()
-    , m_files()
+	: m_mtx()
+	, m_files()
 {
 }
 
@@ -51,21 +51,20 @@ file_lock_table :: ~file_lock_table() throw ()
 bool
 file_lock_table :: acquire(dev_t dev, ino_t ino)
 {
-    po6::threads::mutex::hold hold(&m_mtx);
-    file_t key(dev, ino);
-    std::pair<file_map_t::iterator, bool> x = m_files.insert(key);
-    return x.second;
+	po6::threads::mutex::hold hold(&m_mtx);
+	file_t key(dev, ino);
+	std::pair<file_map_t::iterator, bool> x = m_files.insert(key);
+	return x.second;
 }
 
 void
 file_lock_table :: release(dev_t dev, ino_t ino)
 {
-    po6::threads::mutex::hold hold(&m_mtx);
-    file_t key(dev, ino);
-    file_map_t::iterator it = m_files.find(key);
-
-    if (it != m_files.end())
-    {
-        m_files.erase(it);
-    }
+	po6::threads::mutex::hold hold(&m_mtx);
+	file_t key(dev, ino);
+	file_map_t::iterator it = m_files.find(key);
+	if (it != m_files.end())
+	{
+		m_files.erase(it);
+	}
 }

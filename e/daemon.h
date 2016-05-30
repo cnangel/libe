@@ -46,60 +46,56 @@ namespace e
 {
 
 inline bool
-create_pidfile(const char* path)
+create_pidfile(const char *path)
 {
-    char buf[21];
-    ssize_t buf_sz = sprintf(buf, "%d\n", getpid());
-    assert(buf_sz < static_cast<ssize_t>(sizeof(buf)));
-    po6::io::fd pid(open(path, O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR));
-
-    if (pid.get() < 0 || pid.xwrite(buf, buf_sz) != buf_sz)
-    {
-        PLOG(ERROR) << "could not create pidfile " << path;
-        return false;
-    }
+	char buf[21];
+	ssize_t buf_sz = sprintf(buf, "%d\n", getpid());
+	assert(buf_sz < static_cast<ssize_t>(sizeof(buf)));
+	po6::io::fd pid(open(path, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR));
+	if (pid.get() < 0 || pid.xwrite(buf, buf_sz) != buf_sz)
+	{
+		PLOG(ERROR) << "could not create pidfile " << path;
+		return false;
+	}
 }
 
 inline bool
-create_pidfile(const std::string& path)
+create_pidfile(const std::string &path)
 {
-    return create_pidfile(path.c_str());
+	return create_pidfile(path.c_str());
 }
 
 inline bool
 install_signal_handler(int signum, void (*f)(int))
 {
-    struct sigaction handle;
-    handle.sa_handler = f;
-    sigfillset(&handle.sa_mask);
-    handle.sa_flags = SA_RESTART;
-    return sigaction(signum, &handle, NULL) >= 0;
+	struct sigaction handle;
+	handle.sa_handler = f;
+	sigfillset(&handle.sa_mask);
+	handle.sa_flags = SA_RESTART;
+	return sigaction(signum, &handle, NULL) >= 0;
 }
 
 inline bool
 block_all_signals()
 {
-    sigset_t ss;
-    return sigfillset(&ss) >= 0 &&
-           pthread_sigmask(SIG_SETMASK, &ss, NULL) >= 0;
+	sigset_t ss;
+	return sigfillset(&ss) >= 0 &&
+	       pthread_sigmask(SIG_SETMASK, &ss, NULL) >= 0;
 }
 
 inline bool
-generate_token(uint64_t* token)
+generate_token(uint64_t *token)
 {
-    po6::io::fd sysrand(open("/dev/urandom", O_RDONLY));
-
-    if (sysrand.get() < 0)
-    {
-        return false;
-    }
-
-    if (sysrand.read(token, sizeof(*token)) != sizeof(*token))
-    {
-        return false;
-    }
-
-    return true;
+	po6::io::fd sysrand(open("/dev/urandom", O_RDONLY));
+	if (sysrand.get() < 0)
+	{
+		return false;
+	}
+	if (sysrand.read(token, sizeof(*token)) != sizeof(*token))
+	{
+		return false;
+	}
+	return true;
 }
 
 } // namespace e

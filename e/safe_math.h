@@ -39,114 +39,106 @@ namespace e
 {
 
 inline bool
-safe_add(int64_t lhs, int64_t rhs, int64_t* result)
+safe_add(int64_t lhs, int64_t rhs, int64_t *result)
 {
 #ifdef _MSC_VER
-    return false; /* not required for client */
+	return false; /* not required for client */
 #else
-    uint64_t OF = 0;
-    int64_t sum = lhs;
-    __asm__ __volatile__("addq %2, %0\n\t"
-                         "mov $0, %%rax\n\t"
-                         "seto %%al\n\t"
-                         "movq %%rax, %1\n\t"
-                         : "+r" (sum), "=r" (OF)
-                         : "r" (rhs)
-                         : "rax");
-    *result = sum;
-    return OF == 0;
+	uint64_t OF = 0;
+	int64_t sum = lhs;
+	__asm__ __volatile__("addq %2, %0\n\t"
+	                     "mov $0, %%rax\n\t"
+	                     "seto %%al\n\t"
+	                     "movq %%rax, %1\n\t"
+	                     : "+r" (sum), "=r" (OF)
+	                     : "r" (rhs)
+	                     : "rax");
+	*result = sum;
+	return OF == 0;
 #endif
 }
 
 inline bool
-safe_sub(int64_t lhs, int64_t rhs, int64_t* result)
+safe_sub(int64_t lhs, int64_t rhs, int64_t *result)
 {
 #ifdef _MSC_VER
-    return false;
+	return false;
 #else
-    uint64_t OF = 0;
-    int64_t difference = lhs;
-    __asm__ __volatile__("subq %2, %0\n\t"
-                         "mov $0, %%rax\n\t"
-                         "seto %%al\n\t"
-                         "movq %%rax, %1\n\t"
-                         : "+r" (difference), "=r" (OF)
-                         : "r" (rhs)
-                         : "rax");
-    *result = difference;
-    return OF == 0;
+	uint64_t OF = 0;
+	int64_t difference = lhs;
+	__asm__ __volatile__("subq %2, %0\n\t"
+	                     "mov $0, %%rax\n\t"
+	                     "seto %%al\n\t"
+	                     "movq %%rax, %1\n\t"
+	                     : "+r" (difference), "=r" (OF)
+	                     : "r" (rhs)
+	                     : "rax");
+	*result = difference;
+	return OF == 0;
 #endif
 }
 
 inline bool
-safe_mul(int64_t lhs, int64_t rhs, int64_t* result)
+safe_mul(int64_t lhs, int64_t rhs, int64_t *result)
 {
 #ifdef _MSC_VER
-    return false;
+	return false;
 #else
-    uint64_t OF = 0;
-    int64_t product = lhs;
-    __asm__ __volatile__("imulq %2\n\t"
-                         "mov $0, %%rdx\n\t"
-                         "seto %%dl\n\t"
-                         : "+a" (product), "=d" (OF)
-                         : "r" (rhs)
-                         : );
-    *result = product;
-    return OF == 0;
+	uint64_t OF = 0;
+	int64_t product = lhs;
+	__asm__ __volatile__("imulq %2\n\t"
+	                     "mov $0, %%rdx\n\t"
+	                     "seto %%dl\n\t"
+	                     : "+a" (product), "=d" (OF)
+	                     : "r" (rhs)
+	                     : );
+	*result = product;
+	return OF == 0;
 #endif
 }
 
 inline bool
-safe_div(int64_t lhs, int64_t rhs, int64_t* result)
+safe_div(int64_t lhs, int64_t rhs, int64_t *result)
 {
-    if (rhs == 0)
-    {
-        return false;
-    }
-
-    if (rhs == -1 && (lhs == INT64_MIN))
-    {
-        return false;
-    }
-
-    int64_t div = lhs / rhs;
-    int64_t mod = static_cast<int64_t>(lhs - static_cast<uint64_t>(div) * rhs);
-
-    if (mod && ((rhs ^ mod) < 0))
-    {
-        --div;
-        mod += rhs;
-    }
-
-    *result = div;
-    return true;
+	if (rhs == 0)
+	{
+		return false;
+	}
+	if (rhs == -1 && (lhs == INT64_MIN))
+	{
+		return false;
+	}
+	int64_t div = lhs / rhs;
+	int64_t mod = static_cast<int64_t>(lhs - static_cast<uint64_t>(div) * rhs);
+	if (mod && ((rhs ^ mod) < 0))
+	{
+		--div;
+		mod += rhs;
+	}
+	*result = div;
+	return true;
 }
 
 inline bool
-safe_mod(int64_t lhs, int64_t rhs, int64_t* result)
+safe_mod(int64_t lhs, int64_t rhs, int64_t *result)
 {
-    if (rhs == 0)
-    {
-        return false;
-    }
-
-    if (rhs == -1 && (lhs == INT64_MIN))
-    {
-        return false;
-    }
-
-    int64_t div = lhs / rhs;
-    int64_t mod = static_cast<int64_t>(lhs - static_cast<uint64_t>(div) * rhs);
-
-    if (mod && ((rhs ^ mod) < 0))
-    {
-        --div;
-        mod += rhs;
-    }
-
-    *result = mod;
-    return true;
+	if (rhs == 0)
+	{
+		return false;
+	}
+	if (rhs == -1 && (lhs == INT64_MIN))
+	{
+		return false;
+	}
+	int64_t div = lhs / rhs;
+	int64_t mod = static_cast<int64_t>(lhs - static_cast<uint64_t>(div) * rhs);
+	if (mod && ((rhs ^ mod) < 0))
+	{
+		--div;
+		mod += rhs;
+	}
+	*result = mod;
+	return true;
 }
 
 } // namespace e

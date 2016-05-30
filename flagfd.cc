@@ -35,21 +35,19 @@
 using e::flagfd;
 
 flagfd :: flagfd()
-    : m_read()
-    , m_write()
-    , m_flagged(false)
-    , m_error(0)
+	: m_read()
+	, m_write()
+	, m_flagged(false)
+	, m_error(0)
 {
-    int fds[2];
-
-    if (pipe(fds) < 0)
-    {
-        m_error = errno;
-        return;
-    }
-
-    m_read = fds[0];
-    m_write = fds[1];
+	int fds[2];
+	if (pipe(fds) < 0)
+	{
+		m_error = errno;
+		return;
+	}
+	m_read = fds[0];
+	m_write = fds[1];
 }
 
 flagfd :: ~flagfd() throw ()
@@ -59,49 +57,46 @@ flagfd :: ~flagfd() throw ()
 bool
 flagfd :: valid() const
 {
-    return m_read.get() >= 0;
+	return m_read.get() >= 0;
 }
 
 int
 flagfd :: error() const
 {
-    return m_error;
+	return m_error;
 }
 
 int
 flagfd :: poll_fd()
 {
-    return m_read.get();
+	return m_read.get();
 }
 
 bool
 flagfd :: isset()
 {
-    return m_flagged;
+	return m_flagged;
 }
 
 void
 flagfd :: set()
 {
-    if (!m_flagged)
-    {
-        char c = 'A';
-        PO6_EXPLICITLY_IGNORE(m_write.xwrite(&c, 1));
-    }
-
-    m_flagged = true;
+	if (!m_flagged)
+	{
+		char c = 'A';
+		PO6_EXPLICITLY_IGNORE(m_write.xwrite(&c, 1));
+	}
+	m_flagged = true;
 }
 
 void
 flagfd :: clear()
 {
-    if (m_flagged)
-    {
-        char buf[32];
-
-        while (m_read.read(buf, 32) == 32)
-            ;
-    }
-
-    m_flagged = false;
+	if (m_flagged)
+	{
+		char buf[32];
+		while (m_read.read(buf, 32) == 32)
+			;
+	}
+	m_flagged = false;
 }

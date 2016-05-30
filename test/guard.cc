@@ -37,249 +37,217 @@ int check;
 void
 func0()
 {
-    check = 0;
+	check = 0;
 }
 
 void
 func1(int a)
 {
-    check = a;
+	check = a;
 }
 
 void
 func2(int a, int b)
 {
-    check = a + b;
+	check = a + b;
 }
 
 void
 func3(int a, int b, int c)
 {
-    check = a + b + c;
+	check = a + b + c;
 }
 
 TEST(GuardTest, Function0)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(&func0);
-        g.use_variable();
-        ASSERT_EQ(-1, check);
-    }
-
-    ASSERT_EQ(0, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(&func0);
+		g.use_variable();
+		ASSERT_EQ(-1, check);
+	}
+	ASSERT_EQ(0, check);
 }
 
 TEST(GuardTest, Function1)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func1, 1);
-        g.use_variable();
-        ASSERT_EQ(-1, check);
-    }
-
-    ASSERT_EQ(1, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func1, 1);
+		g.use_variable();
+		ASSERT_EQ(-1, check);
+	}
+	ASSERT_EQ(1, check);
 }
 
 TEST(GuardTest, Function2)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func2, 1, 2);
-        g.use_variable();
-        ASSERT_EQ(-1, check);
-    }
-
-    ASSERT_EQ(3, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func2, 1, 2);
+		g.use_variable();
+		ASSERT_EQ(-1, check);
+	}
+	ASSERT_EQ(3, check);
 }
 
 TEST(GuardTest, Function3)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func3, 1, 2, 3);
-        g.use_variable();
-        ASSERT_EQ(-1, check);
-    }
-
-    ASSERT_EQ(6, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func3, 1, 2, 3);
+		g.use_variable();
+		ASSERT_EQ(-1, check);
+	}
+	ASSERT_EQ(6, check);
 }
 
 TEST(GuardTest, Function0Dismiss)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func0);
-        ASSERT_EQ(-1, check);
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func0);
+		ASSERT_EQ(-1, check);
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, check);
 }
 
 TEST(GuardTest, Function1Dismiss)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func1, 1);
-        ASSERT_EQ(-1, check);
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func1, 1);
+		ASSERT_EQ(-1, check);
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, check);
 }
 
 TEST(GuardTest, Function2Dismiss)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func2, 1, 2);
-        ASSERT_EQ(-1, check);
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func2, 1, 2);
+		ASSERT_EQ(-1, check);
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, check);
 }
 
 TEST(GuardTest, Function3Dismiss)
 {
-    check = -1;
-
-    {
-        e::guard g = e::makeguard(func3, 1, 2, 3);
-        ASSERT_EQ(-1, check);
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, check);
+	check = -1;
+	{
+		e::guard g = e::makeguard(func3, 1, 2, 3);
+		ASSERT_EQ(-1, check);
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, check);
 }
 
 class object
 {
-    public:
-        object() : m_count(-1) {}
+public:
+	object() : m_count(-1) {}
 
-    public:
-        void func0() { m_count = 0; }
-        void func1(int a) { m_count = a; }
-        void func2(int a, int b) { m_count = a + b; }
-        void func3(int a, int b, int c) { m_count = a + b + c; }
-        int count() const { return m_count; }
+public:
+	void func0() { m_count = 0; }
+	void func1(int a) { m_count = a; }
+	void func2(int a, int b) { m_count = a + b; }
+	void func3(int a, int b, int c) { m_count = a + b + c; }
+	int count() const { return m_count; }
 
-    private:
-        int m_count;
+private:
+	int m_count;
 };
 
 TEST(GuardTest, Object0)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func0);
-        g.use_variable();
-        ASSERT_EQ(-1, obj.count());
-    }
-
-    ASSERT_EQ(0, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func0);
+		g.use_variable();
+		ASSERT_EQ(-1, obj.count());
+	}
+	ASSERT_EQ(0, obj.count());
 }
 
 TEST(GuardTest, Object1)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func1, 1);
-        g.use_variable();
-        ASSERT_EQ(-1, obj.count());
-    }
-
-    ASSERT_EQ(1, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func1, 1);
+		g.use_variable();
+		ASSERT_EQ(-1, obj.count());
+	}
+	ASSERT_EQ(1, obj.count());
 }
 
 TEST(GuardTest, Object2)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func2, 1, 2);
-        g.use_variable();
-        ASSERT_EQ(-1, obj.count());
-    }
-
-    ASSERT_EQ(3, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func2, 1, 2);
+		g.use_variable();
+		ASSERT_EQ(-1, obj.count());
+	}
+	ASSERT_EQ(3, obj.count());
 }
 
 TEST(GuardTest, Object3)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func3, 1, 2, 3);
-        g.use_variable();
-        ASSERT_EQ(-1, obj.count());
-    }
-
-    ASSERT_EQ(6, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func3, 1, 2, 3);
+		g.use_variable();
+		ASSERT_EQ(-1, obj.count());
+	}
+	ASSERT_EQ(6, obj.count());
 }
 
 TEST(GuardTest, Object0Dismiss)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func0);
-        ASSERT_EQ(-1, obj.count());
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func0);
+		ASSERT_EQ(-1, obj.count());
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, obj.count());
 }
 
 TEST(GuardTest, Object1Dismiss)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func1, 1);
-        ASSERT_EQ(-1, obj.count());
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func1, 1);
+		ASSERT_EQ(-1, obj.count());
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, obj.count());
 }
 
 TEST(GuardTest, Object2Dismiss)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func2, 1, 2);
-        ASSERT_EQ(-1, obj.count());
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func2, 1, 2);
+		ASSERT_EQ(-1, obj.count());
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, obj.count());
 }
 
 TEST(GuardTest, Object3Dismiss)
 {
-    object obj;
-
-    {
-        e::guard g = e::makeobjguard(obj, &object::func3, 1, 2, 3);
-        ASSERT_EQ(-1, obj.count());
-        g.dismiss();
-    }
-
-    ASSERT_EQ(-1, obj.count());
+	object obj;
+	{
+		e::guard g = e::makeobjguard(obj, &object::func3, 1, 2, 3);
+		ASSERT_EQ(-1, obj.count());
+		g.dismiss();
+	}
+	ASSERT_EQ(-1, obj.count());
 }
 
 } // namespace

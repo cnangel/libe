@@ -1,4 +1,4 @@
-// Copyright (c) 2014, Robert Escriva
+// Copyright (c) 2011, Robert Escriva
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -25,40 +25,62 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+#ifndef e_timer_h_
+#define e_timer_h_
+
 // C
-#include <string.h>
+#include <stdint.h>
+
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef _MSC_VER
+// Windows
+#define _WINSOCKAPI_
+#include <windows.h>
+#endif
+
+//mach
+#ifdef HAVE_MACH_ABSOLUTE_TIME
+#include <mach/mach_time.h>
+#endif
+
+// POSIX
+#include <errno.h>
+#include <time.h>
+
+// STL
+#include <exception>
+
+// po6
+#include <po6/error.h>
 
 // e
-#include "th.h"
-#include "e/pow2.h"
+#include "e/time.h"
 
-namespace
+uint64_t
+e :: time()
 {
-
-TEST(Pow2Test, Many)
-{
-	ASSERT_EQ(uint64_t(0), e::next_pow2(0));
-	ASSERT_EQ(uint64_t(1), e::next_pow2(1));
-	ASSERT_EQ(uint64_t(2), e::next_pow2(2));
-	ASSERT_EQ(uint64_t(4), e::next_pow2(3));
-	ASSERT_EQ(uint64_t(4), e::next_pow2(4));
-	for (uint64_t i = 5; i <= 8; ++i) { ASSERT_EQ(8, e::next_pow2(i)); }
-	for (uint64_t i = 9; i <= 16; ++i) { ASSERT_EQ(16, e::next_pow2(i)); }
-	for (uint64_t i = 17; i <= 32; ++i) { ASSERT_EQ(32, e::next_pow2(i)); }
-	ASSERT_EQ(562949953421312ULL, e::next_pow2(281474976710657));
+#ifdef _MSC_VER
+	LARGE_INTEGER tickfreq, timestamp;
+	tickfreq.QuadPart = 0;
+	timestamp.QuadPart = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER *)&tickfreq);
+	QueryPerformanceCounter((LARGE_INTEGER *)&timestamp);
+	return timestamp.QuadPart / (tickfreq.QuadPart / 1000000000.0);
+#elif defined HAVE_MACH_ABSOLUTE_TIME
+	mach_timebase_info_data_t info;
+	mach_timebase_info(&info);
+	return mach_absolute_time() * info.numer / info.denom;
+#else
+	timespec ts;
+	if (clock_gettime(CLOCK_REALTIME, &ts) < 0)
+	{
+		throw po6::error(errno);
+	}
+	return ts.tv_sec * 1000000000 + ts.tv_nsec;
+#endif
 }
 
-TEST(Pow2Test, IsPow2)
-{
-	ASSERT_FALSE(e::is_pow2(0));
-	ASSERT_TRUE(e::is_pow2(1));
-	ASSERT_TRUE(e::is_pow2(2));
-	ASSERT_FALSE(e::is_pow2(3));
-	ASSERT_TRUE(e::is_pow2(4));
-	ASSERT_FALSE(e::is_pow2(5));
-	ASSERT_FALSE(e::is_pow2(6));
-	ASSERT_FALSE(e::is_pow2(7));
-	ASSERT_TRUE(e::is_pow2(8));
-}
-
-} // namespace
+#endif // e_timer_h__

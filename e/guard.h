@@ -39,411 +39,411 @@ namespace e
 
 class guard_base
 {
-    public:
-        void dismiss() const throw ()
-        {
-            m_dismissed = true;
-        }
+public:
+	void dismiss() const throw ()
+	{
+		m_dismissed = true;
+	}
 
-    public:
-        void use_variable() const throw () {}
+public:
+	void use_variable() const throw () {}
 
-    protected:
-        guard_base()
-            : m_dismissed(false)
-        {
-        }
+protected:
+	guard_base()
+		: m_dismissed(false)
+	{
+	}
 
-        guard_base(const guard_base& other)
-            : m_dismissed(other.m_dismissed)
-        {
-            other.dismiss();
-        }
+	guard_base(const guard_base &other)
+		: m_dismissed(other.m_dismissed)
+	{
+		other.dismiss();
+	}
 
-        virtual ~guard_base() {}
+	virtual ~guard_base() {}
 
-    protected:
-        mutable bool m_dismissed;
+protected:
+	mutable bool m_dismissed;
 
-    private:
-        guard_base& operator = (const guard_base&);
+private:
+	guard_base &operator = (const guard_base &);
 };
 
 template <typename F>
 class guard_func0 : public guard_base
 {
-    public:
-        guard_func0(const F& func)
-            : m_func(func)
-        {
-        }
+public:
+	guard_func0(const F &func)
+		: m_func(func)
+	{
+	}
 
-        ~guard_func0()
-        {
-            if (!m_dismissed)
-            {
-                m_func();
-            }
-        }
+	~guard_func0()
+	{
+		if (!m_dismissed)
+		{
+			m_func();
+		}
+	}
 
-    public:
-        guard_func0(const guard_func0& other);
-        guard_func0& operator = (const guard_func0& rhs);
+public:
+	guard_func0(const guard_func0 &other);
+	guard_func0 &operator = (const guard_func0 &rhs);
 
-    private:
-        F m_func;
+private:
+	F m_func;
 };
 
 template <typename F>
 guard_func0<F>
 makeguard(F func)
 {
-    return guard_func0<F>(func);
+	return guard_func0<F>(func);
 }
 
 template <typename F, typename P1>
 class guard_func1 : public guard_base
 {
-    public:
-        guard_func1(const F& func, const P1& p1)
-            : m_func(func)
-            , m_p1(p1)
-        {
-        }
+public:
+	guard_func1(const F &func, const P1 &p1)
+		: m_func(func)
+		, m_p1(p1)
+	{
+	}
 
-        ~guard_func1()
-        {
-            if (!m_dismissed)
-            {
-                m_func(m_p1);
-            }
-        }
+	~guard_func1()
+	{
+		if (!m_dismissed)
+		{
+			m_func(m_p1);
+		}
+	}
 
-    public:
-        guard_func1(const guard_func1& other);
-        guard_func1& operator = (const guard_func1& rhs);
+public:
+	guard_func1(const guard_func1 &other);
+	guard_func1 &operator = (const guard_func1 &rhs);
 
-    private:
-        F m_func;
-        const P1 m_p1;
+private:
+	F m_func;
+	const P1 m_p1;
 };
 
 template <typename F, typename P1>
 guard_func1<F, P1>
 makeguard(F func, P1 p1)
 {
-    return guard_func1<F, P1>(func, p1);
+	return guard_func1<F, P1>(func, p1);
 }
 
 template <typename F, typename P1, typename P2>
 class guard_func2 : public guard_base
 {
-    public:
-        guard_func2(const F& func, const P1& p1, const P2& p2)
-            : m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-        {
-        }
+public:
+	guard_func2(const F &func, const P1 &p1, const P2 &p2)
+		: m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+	{
+	}
 
-        ~guard_func2()
-        {
-            if (!m_dismissed)
-            {
-                m_func(m_p1, m_p2);
-            }
-        }
+	~guard_func2()
+	{
+		if (!m_dismissed)
+		{
+			m_func(m_p1, m_p2);
+		}
+	}
 
-    public:
-        guard_func2(const guard_func2& other);
-        guard_func2& operator = (const guard_func2& rhs);
+public:
+	guard_func2(const guard_func2 &other);
+	guard_func2 &operator = (const guard_func2 &rhs);
 
-    private:
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
+private:
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
 };
 
 template <typename F, typename P1, typename P2>
 guard_func2<F, P1, P2>
 makeguard(F func, P1 p1, P2 p2)
 {
-    return guard_func2<F, P1, P2>(func, p1, p2);
+	return guard_func2<F, P1, P2>(func, p1, p2);
 }
 
 template <typename F, typename P1, typename P2, typename P3>
 class guard_func3 : public guard_base
 {
-    public:
-        guard_func3(const F& func, const P1& p1, const P2& p2, const P3& p3)
-            : m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-            , m_p3(p3)
-        {
-        }
+public:
+	guard_func3(const F &func, const P1 &p1, const P2 &p2, const P3 &p3)
+		: m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+		, m_p3(p3)
+	{
+	}
 
-        ~guard_func3()
-        {
-            if (!m_dismissed)
-            {
-                m_func(m_p1, m_p2, m_p3);
-            }
-        }
+	~guard_func3()
+	{
+		if (!m_dismissed)
+		{
+			m_func(m_p1, m_p2, m_p3);
+		}
+	}
 
-    public:
-        guard_func3(const guard_func3& other);
-        guard_func3& operator = (const guard_func3& rhs);
+public:
+	guard_func3(const guard_func3 &other);
+	guard_func3 &operator = (const guard_func3 &rhs);
 
-    private:
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
-        const P3 m_p3;
+private:
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
+	const P3 m_p3;
 };
 
 template <typename F, typename P1, typename P2, typename P3>
 guard_func3<F, P1, P2, P3>
 makeguard(F func, P1 p1, P2 p2, P3 p3)
 {
-    return guard_func3<F, P1, P2, P3>(func, p1, p2, p3);
+	return guard_func3<F, P1, P2, P3>(func, p1, p2, p3);
 }
 
 template <typename O, typename F>
 class guard_obj0 : public guard_base
 {
-    public:
-        guard_obj0(O& obj, F func)
-            : m_obj(obj)
-            , m_func(func)
-        {
-        }
+public:
+	guard_obj0(O &obj, F func)
+		: m_obj(obj)
+		, m_func(func)
+	{
+	}
 
-        ~guard_obj0()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)();
-            }
-        }
+	~guard_obj0()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)();
+		}
+	}
 
-    public:
-        guard_obj0(const guard_obj0& other);
-        guard_obj0& operator = (const guard_obj0& rhs);
+public:
+	guard_obj0(const guard_obj0 &other);
+	guard_obj0 &operator = (const guard_obj0 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
+private:
+	O &m_obj;
+	F m_func;
 };
 
 template <typename O, typename F>
 guard_obj0<O, F>
-makeobjguard(O& obj, F func)
+makeobjguard(O &obj, F func)
 {
-    return guard_obj0<O, F>(obj, func);
+	return guard_obj0<O, F>(obj, func);
 }
 
 template <typename O, typename F, typename P1>
 class guard_obj1 : public guard_base
 {
-    public:
-        guard_obj1(O& obj, F func, P1 p1)
-            : m_obj(obj)
-            , m_func(func)
-            , m_p1(p1)
-        {
-        }
+public:
+	guard_obj1(O &obj, F func, P1 p1)
+		: m_obj(obj)
+		, m_func(func)
+		, m_p1(p1)
+	{
+	}
 
-        ~guard_obj1()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)(m_p1);
-            }
-        }
+	~guard_obj1()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)(m_p1);
+		}
+	}
 
-    public:
-        guard_obj1(const guard_obj1& other);
-        guard_obj1& operator = (const guard_obj1& rhs);
+public:
+	guard_obj1(const guard_obj1 &other);
+	guard_obj1 &operator = (const guard_obj1 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
-        const P1 m_p1;
+private:
+	O &m_obj;
+	F m_func;
+	const P1 m_p1;
 };
 
 template <typename O, typename F, typename P1>
 guard_obj1<O, F, P1>
-makeobjguard(O& obj, F func, P1 p1)
+makeobjguard(O &obj, F func, P1 p1)
 {
-    return guard_obj1<O, F, P1>(obj, func, p1);
+	return guard_obj1<O, F, P1>(obj, func, p1);
 }
 
 template <typename O, typename F, typename P1, typename P2>
 class guard_obj2 : public guard_base
 {
-    public:
-        guard_obj2(O& obj, F func, P1 p1, P2 p2)
-            : m_obj(obj)
-            , m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-        {
-        }
+public:
+	guard_obj2(O &obj, F func, P1 p1, P2 p2)
+		: m_obj(obj)
+		, m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+	{
+	}
 
-        ~guard_obj2()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)(m_p1, m_p2);
-            }
-        }
+	~guard_obj2()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)(m_p1, m_p2);
+		}
+	}
 
-    public:
-        guard_obj2(const guard_obj2& other);
-        guard_obj2& operator = (const guard_obj2& rhs);
+public:
+	guard_obj2(const guard_obj2 &other);
+	guard_obj2 &operator = (const guard_obj2 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
+private:
+	O &m_obj;
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
 };
 
 template <typename O, typename F, typename P1, typename P2>
 guard_obj2<O, F, P1, P2>
-makeobjguard(O& obj, F func, P1 p1, P2 p2)
+makeobjguard(O &obj, F func, P1 p1, P2 p2)
 {
-    return guard_obj2<O, F, P1, P2>(obj, func, p1, p2);
+	return guard_obj2<O, F, P1, P2>(obj, func, p1, p2);
 }
 
 template <typename O, typename F, typename P1, typename P2, typename P3>
 class guard_obj3 : public guard_base
 {
-    public:
-        guard_obj3(O& obj, F func, P1 p1, P2 p2, P3 p3)
-            : m_obj(obj)
-            , m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-            , m_p3(p3)
-        {
-        }
+public:
+	guard_obj3(O &obj, F func, P1 p1, P2 p2, P3 p3)
+		: m_obj(obj)
+		, m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+		, m_p3(p3)
+	{
+	}
 
-        ~guard_obj3()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)(m_p1, m_p2, m_p3);
-            }
-        }
+	~guard_obj3()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)(m_p1, m_p2, m_p3);
+		}
+	}
 
-    public:
-        guard_obj3(const guard_obj3& other);
-        guard_obj3& operator = (const guard_obj3& rhs);
+public:
+	guard_obj3(const guard_obj3 &other);
+	guard_obj3 &operator = (const guard_obj3 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
-        const P3 m_p3;
+private:
+	O &m_obj;
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
+	const P3 m_p3;
 };
 
 template <typename O, typename F, typename P1, typename P2, typename P3>
 guard_obj3<O, F, P1, P2, P3>
-makeobjguard(O& obj, F func, P1 p1, P2 p2, P3 p3)
+makeobjguard(O &obj, F func, P1 p1, P2 p2, P3 p3)
 {
-    return guard_obj3<O, F, P1, P2, P3>(obj, func, p1, p2, p3);
+	return guard_obj3<O, F, P1, P2, P3>(obj, func, p1, p2, p3);
 }
 
 template <typename O, typename F, typename P1, typename P2, typename P3, typename P4>
 class guard_obj4 : public guard_base
 {
-    public:
-        guard_obj4(O& obj, F func, P1 p1, P2 p2, P3 p3, P4 p4)
-            : m_obj(obj)
-            , m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-            , m_p3(p3)
-            , m_p4(p4)
-        {
-        }
+public:
+	guard_obj4(O &obj, F func, P1 p1, P2 p2, P3 p3, P4 p4)
+		: m_obj(obj)
+		, m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+		, m_p3(p3)
+		, m_p4(p4)
+	{
+	}
 
-        ~guard_obj4()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)(m_p1, m_p2, m_p3, m_p4);
-            }
-        }
+	~guard_obj4()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)(m_p1, m_p2, m_p3, m_p4);
+		}
+	}
 
-    public:
-        guard_obj4(const guard_obj4& other);
-        guard_obj4& operator = (const guard_obj4& rhs);
+public:
+	guard_obj4(const guard_obj4 &other);
+	guard_obj4 &operator = (const guard_obj4 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
-        const P3 m_p3;
-        const P4 m_p4;
+private:
+	O &m_obj;
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
+	const P3 m_p3;
+	const P4 m_p4;
 };
 
 template <typename O, typename F, typename P1, typename P2, typename P3, typename P4>
 guard_obj4<O, F, P1, P2, P3, P4>
-makeobjguard(O& obj, F func, P1 p1, P2 p2, P3 p3, P4 p4)
+makeobjguard(O &obj, F func, P1 p1, P2 p2, P3 p3, P4 p4)
 {
-    return guard_obj4<O, F, P1, P2, P3, P4>(obj, func, p1, p2, p3, p4);
+	return guard_obj4<O, F, P1, P2, P3, P4>(obj, func, p1, p2, p3, p4);
 }
 
 template <typename O, typename F, typename P1, typename P2, typename P3, typename P4, typename P5>
 class guard_obj5 : public guard_base
 {
-    public:
-        guard_obj5(O& obj, F func, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
-            : m_obj(obj)
-            , m_func(func)
-            , m_p1(p1)
-            , m_p2(p2)
-            , m_p3(p3)
-            , m_p4(p4)
-            , m_p5(p5)
-        {
-        }
+public:
+	guard_obj5(O &obj, F func, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+		: m_obj(obj)
+		, m_func(func)
+		, m_p1(p1)
+		, m_p2(p2)
+		, m_p3(p3)
+		, m_p4(p4)
+		, m_p5(p5)
+	{
+	}
 
-        ~guard_obj5()
-        {
-            if (!m_dismissed)
-            {
-                (m_obj.*m_func)(m_p1, m_p2, m_p3, m_p4, m_p5);
-            }
-        }
+	~guard_obj5()
+	{
+		if (!m_dismissed)
+		{
+			(m_obj.*m_func)(m_p1, m_p2, m_p3, m_p4, m_p5);
+		}
+	}
 
-    public:
-        guard_obj5(const guard_obj5& other);
-        guard_obj5& operator = (const guard_obj5& rhs);
+public:
+	guard_obj5(const guard_obj5 &other);
+	guard_obj5 &operator = (const guard_obj5 &rhs);
 
-    private:
-        O& m_obj;
-        F m_func;
-        const P1 m_p1;
-        const P2 m_p2;
-        const P3 m_p3;
-        const P4 m_p4;
-        const P5 m_p5;
+private:
+	O &m_obj;
+	F m_func;
+	const P1 m_p1;
+	const P2 m_p2;
+	const P3 m_p3;
+	const P4 m_p4;
+	const P5 m_p5;
 };
 
 template <typename O, typename F, typename P1, typename P2, typename P3, typename P4, typename P5>
 guard_obj5<O, F, P1, P2, P3, P4, P5>
-makeobjguard(O& obj, F func, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+makeobjguard(O &obj, F func, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
 {
-    return guard_obj5<O, F, P1, P2, P3, P4, P5>(obj, func, p1, p2, p3, p4, p5);
+	return guard_obj5<O, F, P1, P2, P3, P4, P5>(obj, func, p1, p2, p3, p4, p5);
 }
 
-typedef const guard_base& guard;
+typedef const guard_base &guard;
 
 } // namespace e
 

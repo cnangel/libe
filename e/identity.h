@@ -35,14 +35,14 @@ namespace e
 {
 
 bool
-load_identity(const char* path, bool* saved, uint64_t* id,
-              bool set_bind_to, po6::net::location* bind_to,
-              bool set_rendezvous, std::string* rendezvous);
+load_identity(const char *path, bool *saved, uint64_t *id,
+              bool set_bind_to, po6::net::location *bind_to,
+              bool set_rendezvous, std::string *rendezvous);
 
 bool
-save_identity(const char* path, uint64_t id,
-              const po6::net::location& bind_to,
-              const std::string& rendezvous);
+save_identity(const char *path, uint64_t id,
+              const po6::net::location &bind_to,
+              const std::string &rendezvous);
 
 } // namespace e
 

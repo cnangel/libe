@@ -46,43 +46,43 @@ namespace e
 // Comparisons are NOT lexicographic, just guaranteed to follow be consistent.
 class slice
 {
-    public:
-        slice();
-        slice(const char* data);
-        slice(const char* data, size_t sz);
-        slice(const uint8_t* data, size_t sz);
-        slice(const std::string& str);
-        slice(const std::vector<uint8_t>& buf);
-        slice(const slice& other);
-        ~slice() throw ();
+public:
+	slice();
+	slice(const char *data);
+	slice(const char *data, size_t sz);
+	slice(const uint8_t *data, size_t sz);
+	slice(const std::string &str);
+	slice(const std::vector<uint8_t> &buf);
+	slice(const slice &other);
+	~slice() throw ();
 
-    public:
-        int compare(const slice& rhs) const;
-        const uint8_t* data() const { return m_data; }
-        const char* cdata() const { return reinterpret_cast<const char*>(m_data); }
-        bool empty() const { return m_sz == 0; }
-        std::string hex() const;
-        size_t size() const { return m_sz; }
-        bool starts_with(const e::slice& other) const;
-        std::string str() const { return std::string(cdata(), size()); }
+public:
+	int compare(const slice &rhs) const;
+	const uint8_t *data() const { return m_data; }
+	const char *cdata() const { return reinterpret_cast<const char *>(m_data); }
+	bool empty() const { return m_sz == 0; }
+	std::string hex() const;
+	size_t size() const { return m_sz; }
+	bool starts_with(const e::slice &other) const;
+	std::string str() const { return std::string(cdata(), size()); }
 
-    public:
-        void advance(size_t sz);
-        void reset();
-        void reset(const uint8_t* data, size_t sz);
+public:
+	void advance(size_t sz);
+	void reset();
+	void reset(const uint8_t *data, size_t sz);
 
-    public:
-        slice& operator = (const slice& rhs);
-        bool operator < (const slice& rhs) const { return compare(rhs) < 0; }
-        bool operator <= (const slice& rhs) const { return compare(rhs) <= 0; }
-        bool operator == (const slice& rhs) const { return compare(rhs) == 0; }
-        bool operator != (const slice& rhs) const { return compare(rhs) != 0; }
-        bool operator >= (const slice& rhs) const { return compare(rhs) >= 0; }
-        bool operator > (const slice& rhs) const { return compare(rhs) > 0; }
+public:
+	slice &operator = (const slice &rhs);
+	bool operator < (const slice &rhs) const { return compare(rhs) < 0; }
+	bool operator <= (const slice &rhs) const { return compare(rhs) <= 0; }
+	bool operator == (const slice &rhs) const { return compare(rhs) == 0; }
+	bool operator != (const slice &rhs) const { return compare(rhs) != 0; }
+	bool operator >= (const slice &rhs) const { return compare(rhs) >= 0; }
+	bool operator > (const slice &rhs) const { return compare(rhs) > 0; }
 
-    private:
-        const uint8_t* m_data;
-        size_t m_sz;
+private:
+	const uint8_t *m_data;
+	size_t m_sz;
 };
 
 } // namespace e

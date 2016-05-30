@@ -43,171 +43,155 @@ namespace e
 template <typename T>
 class lockfree_fifo
 {
-    public:
-        lockfree_fifo();
-        ~lockfree_fifo() throw ();
+public:
+	lockfree_fifo();
+	~lockfree_fifo() throw ();
 
-    public:
-        // Return true if the queue is temporarily empty.  If there are no other
-        // operations in progress, then this will intuitively correspond to the
-        // notion of empty() in the STL queue.
-        bool optimistically_empty();
-        void push(T& val);
-        bool pop(T* val);
+public:
+	// Return true if the queue is temporarily empty.  If there are no other
+	// operations in progress, then this will intuitively correspond to the
+	// notion of empty() in the STL queue.
+	bool optimistically_empty();
+	void push(T &val);
+	bool pop(T *val);
 
-    private:
-        class node;
+private:
+	class node;
 
-    private:
-        lockfree_fifo(const lockfree_fifo&);
+private:
+	lockfree_fifo(const lockfree_fifo &);
 
-    private:
-        lockfree_fifo& operator = (const lockfree_fifo&);
+private:
+	lockfree_fifo &operator = (const lockfree_fifo &);
 
-    private:
-        hazard_ptrs<node, 2> m_hazards;
-        node* m_head;
-        node* m_tail;
+private:
+	hazard_ptrs<node, 2> m_hazards;
+	node *m_head;
+	node *m_tail;
 };
 
 template <typename T>
 lockfree_fifo<T> :: lockfree_fifo()
-    : m_hazards()
-    , m_head(new node())
-    , m_tail(m_head)
+	: m_hazards()
+	, m_head(new node())
+	, m_tail(m_head)
 {
 }
 
 template <typename T>
 lockfree_fifo<T> :: ~lockfree_fifo() throw ()
 {
-    std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
-
-    while (m_head)
-    {
-        hptr->set(0, m_head);
-        hptr->retire(m_head);
-        m_head = m_head->next;
-    }
+	std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
+	while (m_head)
+	{
+		hptr->set(0, m_head);
+		hptr->retire(m_head);
+		m_head = m_head->next;
+	}
 }
 
 template <typename T>
 void
-lockfree_fifo<T> :: push(T& val)
+lockfree_fifo<T> :: push(T &val)
 {
-    std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
-    node* tail;
-    node* next;
-    std::auto_ptr<node> n(new node(NULL, val));
-
-    while (true)
-    {
-        tail = m_tail;
-        hptr->set(0, tail);
-
-        // Check to make sure the tail reference wasn't changed.
-        if (tail != m_tail)
-        {
-            continue;
-        }
-
-        next = tail->next;
-
-        // Make sure that it still hasn't changed.
-        if (tail != m_tail)
-        {
-            continue;
-        }
-
-        // If we need to swing the tail pointer.
-        if (next)
-        {
-            __sync_bool_compare_and_swap(&m_tail, tail, next);
-            continue;
-        }
-
-        // Set our node as the next one.  We win!
-        if (__sync_bool_compare_and_swap(&tail->next, NULL, n.get()))
-        {
-            break;
-        }
-    }
-
-    // Swing the tail pointer.
-    __sync_bool_compare_and_swap(&m_tail, tail, n.get());
-    n.release();
+	std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
+	node *tail;
+	node *next;
+	std::auto_ptr<node> n(new node(NULL, val));
+	while (true)
+	{
+		tail = m_tail;
+		hptr->set(0, tail);
+		// Check to make sure the tail reference wasn't changed.
+		if (tail != m_tail)
+		{
+			continue;
+		}
+		next = tail->next;
+		// Make sure that it still hasn't changed.
+		if (tail != m_tail)
+		{
+			continue;
+		}
+		// If we need to swing the tail pointer.
+		if (next)
+		{
+			__sync_bool_compare_and_swap(&m_tail, tail, next);
+			continue;
+		}
+		// Set our node as the next one.  We win!
+		if (__sync_bool_compare_and_swap(&tail->next, NULL, n.get()))
+		{
+			break;
+		}
+	}
+	// Swing the tail pointer.
+	__sync_bool_compare_and_swap(&m_tail, tail, n.get());
+	n.release();
 }
 
 template <typename T>
 bool
-lockfree_fifo<T> :: pop(T* val)
+lockfree_fifo<T> :: pop(T *val)
 {
-    std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
-    node* head;
-    node* tail;
-    node* next;
-
-    while (true)
-    {
-        head = m_head;
-        hptr->set(0, head);
-
-        // Check to make sure the head reference wasn't changed.
-        if (head != m_head)
-        {
-            continue;
-        }
-
-        tail = m_tail;
-        next = head->next;
-        hptr->set(1, next);
-
-        // Check that the head is still valid.
-        if (head != m_head || next != head->next)
-        {
-            continue;
-        }
-
-        // Check if there is an element to return.
-        if (next == NULL)
-        {
-            return false;
-        }
-
-        // Swing the tail.
-        if (head == tail)
-        {
-            __sync_bool_compare_and_swap(&m_tail, tail, next);
-            continue;
-        }
-
-        if (__sync_bool_compare_and_swap(&m_head, head, next))
-        {
-            break;
-        }
-    }
-
-    // XXX We should put a scope guard in place to make sure we retire head
-    // even if the assignment fails.
-    *val = next->data;
-    hptr->retire(head);
-    return true;
+	std::auto_ptr<typename hazard_ptrs<node, 2>::hazard_ptr> hptr = m_hazards.get();
+	node *head;
+	node *tail;
+	node *next;
+	while (true)
+	{
+		head = m_head;
+		hptr->set(0, head);
+		// Check to make sure the head reference wasn't changed.
+		if (head != m_head)
+		{
+			continue;
+		}
+		tail = m_tail;
+		next = head->next;
+		hptr->set(1, next);
+		// Check that the head is still valid.
+		if (head != m_head || next != head->next)
+		{
+			continue;
+		}
+		// Check if there is an element to return.
+		if (next == NULL)
+		{
+			return false;
+		}
+		// Swing the tail.
+		if (head == tail)
+		{
+			__sync_bool_compare_and_swap(&m_tail, tail, next);
+			continue;
+		}
+		if (__sync_bool_compare_and_swap(&m_head, head, next))
+		{
+			break;
+		}
+	}
+	// XXX We should put a scope guard in place to make sure we retire head
+	// even if the assignment fails.
+	*val = next->data;
+	hptr->retire(head);
+	return true;
 }
 
 template <typename T>
 class lockfree_fifo<T> :: node
 {
-    public:
-        node() : next(NULL), data() {}
-        node(node* n, T& d) : next(n), data(d) {}
+public:
+	node() : next(NULL), data() {}
+	node(node *n, T &d) : next(n), data(d) {}
 
-    public:
-        node* next;
-        T data;
+public:
+	node *next;
+	T data;
 
-    private:
-        node(const node&);
-        node& operator = (const node&);
+private:
+	node(const node &);
+	node &operator = (const node &);
 };
 
 } // namespace e

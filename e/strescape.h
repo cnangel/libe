@@ -35,7 +35,7 @@ namespace e
 {
 
 std::string
-strescape(const std::string& input);
+strescape(const std::string &input);
 
 } // namespace e
 

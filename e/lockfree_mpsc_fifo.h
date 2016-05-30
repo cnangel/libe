@@ -38,112 +38,106 @@ namespace e
 template <typename T>
 class lockfree_mpsc_fifo
 {
-    public:
-        lockfree_mpsc_fifo();
-        ~lockfree_mpsc_fifo() throw ();
+public:
+	lockfree_mpsc_fifo();
+	~lockfree_mpsc_fifo() throw ();
 
-    public:
-        void push(T* val);
-        bool pop(e::garbage_collector* gc, T** val);
+public:
+	void push(T *val);
+	bool pop(e::garbage_collector *gc, T **val);
 
-    private:
-        class node;
+private:
+	class node;
 
-    private:
-        node* m_head;
-        node* m_tail;
+private:
+	node *m_head;
+	node *m_tail;
 
-    private:
-        lockfree_mpsc_fifo(const lockfree_mpsc_fifo&);
-        lockfree_mpsc_fifo& operator = (const lockfree_mpsc_fifo&);
+private:
+	lockfree_mpsc_fifo(const lockfree_mpsc_fifo &);
+	lockfree_mpsc_fifo &operator = (const lockfree_mpsc_fifo &);
 };
 
 template <typename T>
 class lockfree_mpsc_fifo<T> :: node
 {
-    public:
-        node() : next(NULL), data(NULL) {}
-        node(T* d) : next(NULL), data(d) {}
-        ~node() throw () { if (data) { delete data; } }
+public:
+	node() : next(NULL), data(NULL) {}
+	node(T *d) : next(NULL), data(d) {}
+	~node() throw () { if (data) { delete data; } }
 
-    public:
-        node* next;
-        T* data;
+public:
+	node *next;
+	T *data;
 
-    private:
-        node(const node&);
-        node& operator = (const node&);
+private:
+	node(const node &);
+	node &operator = (const node &);
 };
 
 template <typename T>
 lockfree_mpsc_fifo<T> :: lockfree_mpsc_fifo()
-    : m_head(new node())
-    , m_tail(m_head)
+	: m_head(new node())
+	, m_tail(m_head)
 {
-    atomic::memory_barrier();
+	atomic::memory_barrier();
 }
 
 template <typename T>
 lockfree_mpsc_fifo<T> :: ~lockfree_mpsc_fifo() throw ()
 {
-    while (atomic::load_ptr_acquire(&m_head))
-    {
-        node* tmp = atomic::load_ptr_acquire(&m_head);
-        node* next = atomic::load_ptr_acquire(&tmp->next);
-        atomic::store_ptr_nobarrier(&m_head, next);
-        delete tmp;
-    }
+	while (atomic::load_ptr_acquire(&m_head))
+	{
+		node *tmp = atomic::load_ptr_acquire(&m_head);
+		node *next = atomic::load_ptr_acquire(&tmp->next);
+		atomic::store_ptr_nobarrier(&m_head, next);
+		delete tmp;
+	}
 }
 
 template <typename T>
 void
-lockfree_mpsc_fifo<T> :: push(T* val)
+lockfree_mpsc_fifo<T> :: push(T *val)
 {
-    node* nn = new node(val);
-    node* tail;
-
-    while (true)
-    {
-        tail = atomic::load_ptr_acquire(&m_tail);
-        node* next = atomic::compare_and_swap_ptr_fullbarrier(&tail->next, (node*)NULL, nn);
-
-        if (next == NULL)
-        {
-            break;
-        }
-        else
-        {
-            atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, next);
-        }
-    }
-
-    atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, nn);
+	node *nn = new node(val);
+	node *tail;
+	while (true)
+	{
+		tail = atomic::load_ptr_acquire(&m_tail);
+		node *next = atomic::compare_and_swap_ptr_fullbarrier(&tail->next, (node *)NULL, nn);
+		if (next == NULL)
+		{
+			break;
+		}
+		else
+		{
+			atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, next);
+		}
+	}
+	atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, nn);
 }
 
 template <typename T>
 bool
-lockfree_mpsc_fifo<T> :: pop(e::garbage_collector* gc, T** val)
+lockfree_mpsc_fifo<T> :: pop(e::garbage_collector *gc, T **val)
 {
-    atomic::memory_barrier();
-    node* head = atomic::load_ptr_acquire(&m_head);
-    node* tail = atomic::load_ptr_acquire(&m_tail);
-    node* next = atomic::load_ptr_acquire(&head->next);
-
-    if (next == NULL)
-    {
-        return false;
-    }
-
-    if (head == tail)
-    {
-        atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, next);
-    }
-
-    atomic::store_ptr_release(&m_head, next);
-    *val = atomic::load_ptr_acquire(&next->data);
-    atomic::store_ptr_release(&next->data, (T*)NULL);
-    gc->collect(head, garbage_collector::free_ptr<node>);
-    return true;
+	atomic::memory_barrier();
+	node *head = atomic::load_ptr_acquire(&m_head);
+	node *tail = atomic::load_ptr_acquire(&m_tail);
+	node *next = atomic::load_ptr_acquire(&head->next);
+	if (next == NULL)
+	{
+		return false;
+	}
+	if (head == tail)
+	{
+		atomic::compare_and_swap_ptr_fullbarrier(&m_tail, tail, next);
+	}
+	atomic::store_ptr_release(&m_head, next);
+	*val = atomic::load_ptr_acquire(&next->data);
+	atomic::store_ptr_release(&next->data, (T *)NULL);
+	gc->collect(head, garbage_collector::free_ptr<node>);
+	return true;
 }
 
 } // namespace e

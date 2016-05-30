@@ -31,66 +31,61 @@
 
 TEST(SeqnoCollector, Test)
 {
-    e::garbage_collector gc;
-    e::garbage_collector::thread_state ts;
-    gc.register_thread(&ts);
-    e::seqno_collector sc(&gc);
-    uint64_t id;
-    // first try, nothing collected
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 0U);
-    // collect zero
-    sc.collect(0);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 1U);
-    // collect one
-    sc.collect(1);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 2U);
-    // collect three
-    sc.collect(3);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 2U);
-    // collect three again
-    sc.collect(3);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 2U);
-    // collect two
-    sc.collect(2);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 4U);
-    // collect_up_to!
-    sc.collect_up_to(9);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 9U);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 9U);
-
-    for (uint64_t i = 9; i < 65536; ++i)
-    {
-        sc.collect(i);
-        sc.lower_bound(&id);
-        ASSERT_EQ(id, i + 1);
-    }
-
-    for (uint64_t i = 65536 + 512; i < 65536 + 1024; ++i)
-    {
-        sc.collect(i);
-        sc.lower_bound(&id);
-        ASSERT_EQ(id, 65536);
-    }
-
-    for (uint64_t i = 65536; i < 65536 + 511; ++i)
-    {
-        sc.collect(i);
-        sc.lower_bound(&id);
-        ASSERT_EQ(id, i + 1);
-    }
-
-    sc.collect(65536 + 511);
-    sc.lower_bound(&id);
-    ASSERT_EQ(id, 65536 + 1024);
-
-    gc.quiescent_state(&ts);
-    gc.deregister_thread(&ts);
+	e::garbage_collector gc;
+	e::garbage_collector::thread_state ts;
+	gc.register_thread(&ts);
+	e::seqno_collector sc(&gc);
+	uint64_t id;
+	// first try, nothing collected
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 0U);
+	// collect zero
+	sc.collect(0);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 1U);
+	// collect one
+	sc.collect(1);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 2U);
+	// collect three
+	sc.collect(3);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 2U);
+	// collect three again
+	sc.collect(3);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 2U);
+	// collect two
+	sc.collect(2);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 4U);
+	// collect_up_to!
+	sc.collect_up_to(9);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 9U);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 9U);
+	for (uint64_t i = 9; i < 65536; ++i)
+	{
+		sc.collect(i);
+		sc.lower_bound(&id);
+		ASSERT_EQ(id, i + 1);
+	}
+	for (uint64_t i = 65536 + 512; i < 65536 + 1024; ++i)
+	{
+		sc.collect(i);
+		sc.lower_bound(&id);
+		ASSERT_EQ(id, 65536);
+	}
+	for (uint64_t i = 65536; i < 65536 + 511; ++i)
+	{
+		sc.collect(i);
+		sc.lower_bound(&id);
+		ASSERT_EQ(id, i + 1);
+	}
+	sc.collect(65536 + 511);
+	sc.lower_bound(&id);
+	ASSERT_EQ(id, 65536 + 1024);
+	gc.quiescent_state(&ts);
+	gc.deregister_thread(&ts);
 }

@@ -34,98 +34,90 @@ namespace
 
 TEST(ConvertTest, Uint64NormalCases)
 {
-    ASSERT_GE(sizeof(unsigned long int), sizeof(uint32_t));
-
-    try
-    {
-        ASSERT_EQ(0U, e::convert::to_uint64_t("0"));
-        ASSERT_EQ(0U, e::convert::to_uint64_t("0x0"));
-        ASSERT_EQ(0U, e::convert::to_uint64_t("0x0", 16));
-        ASSERT_EQ(0U, e::convert::to_uint64_t("00"));
-        ASSERT_EQ(0U, e::convert::to_uint64_t("00", 8));
-
-        ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("18446744073709551615"));
-        ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("0xffffffffffffffff"));
-        ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("0xffffffffffffffff", 16));
-        ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("01777777777777777777777"));
-        ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("01777777777777777777777", 8));
-    }
-    catch (...)
-    {
-        FAIL();
-    }
+	ASSERT_GE(sizeof(unsigned long int), sizeof(uint32_t));
+	try
+	{
+		ASSERT_EQ(0U, e::convert::to_uint64_t("0"));
+		ASSERT_EQ(0U, e::convert::to_uint64_t("0x0"));
+		ASSERT_EQ(0U, e::convert::to_uint64_t("0x0", 16));
+		ASSERT_EQ(0U, e::convert::to_uint64_t("00"));
+		ASSERT_EQ(0U, e::convert::to_uint64_t("00", 8));
+		ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("18446744073709551615"));
+		ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("0xffffffffffffffff"));
+		ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("0xffffffffffffffff", 16));
+		ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("01777777777777777777777"));
+		ASSERT_EQ(18446744073709551615ULL, e::convert::to_uint64_t("01777777777777777777777", 8));
+	}
+	catch (...)
+	{
+		FAIL();
+	}
 }
 
 TEST(ConvertTest, Uint32NormalCases)
 {
-    ASSERT_GE(sizeof(unsigned long int), sizeof(uint32_t));
-
-    try
-    {
-        ASSERT_EQ(0U, e::convert::to_uint32_t("0"));
-        ASSERT_EQ(0U, e::convert::to_uint32_t("0x0"));
-        ASSERT_EQ(0U, e::convert::to_uint32_t("0x0", 16));
-        ASSERT_EQ(0U, e::convert::to_uint32_t("00"));
-        ASSERT_EQ(0U, e::convert::to_uint32_t("00", 8));
-
-        ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("4294967295"));
-        ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("0xffffffff"));
-        ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("0xffffffff", 16));
-        ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("037777777777"));
-        ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("037777777777", 8));
-    }
-    catch (...)
-    {
-        FAIL();
-    }
+	ASSERT_GE(sizeof(unsigned long int), sizeof(uint32_t));
+	try
+	{
+		ASSERT_EQ(0U, e::convert::to_uint32_t("0"));
+		ASSERT_EQ(0U, e::convert::to_uint32_t("0x0"));
+		ASSERT_EQ(0U, e::convert::to_uint32_t("0x0", 16));
+		ASSERT_EQ(0U, e::convert::to_uint32_t("00"));
+		ASSERT_EQ(0U, e::convert::to_uint32_t("00", 8));
+		ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("4294967295"));
+		ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("0xffffffff"));
+		ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("0xffffffff", 16));
+		ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("037777777777"));
+		ASSERT_EQ(4294967295UL, e::convert::to_uint32_t("037777777777", 8));
+	}
+	catch (...)
+	{
+		FAIL();
+	}
 }
 
 TEST(ConvertTest, Uint16NormalCases)
 {
-    ASSERT_GE(sizeof(unsigned long int), sizeof(uint16_t));
-
-    try
-    {
-        ASSERT_EQ(0U, e::convert::to_uint16_t("0"));
-        ASSERT_EQ(0U, e::convert::to_uint16_t("0x0"));
-        ASSERT_EQ(0U, e::convert::to_uint16_t("0x0", 16));
-        ASSERT_EQ(0U, e::convert::to_uint16_t("00"));
-        ASSERT_EQ(0U, e::convert::to_uint16_t("00", 8));
-
-        ASSERT_EQ(65535, e::convert::to_uint16_t("65535"));
-        ASSERT_EQ(65535, e::convert::to_uint16_t("0xffff"));
-        ASSERT_EQ(65535, e::convert::to_uint16_t("0xffff", 16));
-        ASSERT_EQ(65535, e::convert::to_uint16_t("0177777"));
-        ASSERT_EQ(65535, e::convert::to_uint16_t("0177777", 8));
-    }
-    catch (...)
-    {
-        FAIL();
-    }
+	ASSERT_GE(sizeof(unsigned long int), sizeof(uint16_t));
+	try
+	{
+		ASSERT_EQ(0U, e::convert::to_uint16_t("0"));
+		ASSERT_EQ(0U, e::convert::to_uint16_t("0x0"));
+		ASSERT_EQ(0U, e::convert::to_uint16_t("0x0", 16));
+		ASSERT_EQ(0U, e::convert::to_uint16_t("00"));
+		ASSERT_EQ(0U, e::convert::to_uint16_t("00", 8));
+		ASSERT_EQ(65535, e::convert::to_uint16_t("65535"));
+		ASSERT_EQ(65535, e::convert::to_uint16_t("0xffff"));
+		ASSERT_EQ(65535, e::convert::to_uint16_t("0xffff", 16));
+		ASSERT_EQ(65535, e::convert::to_uint16_t("0177777"));
+		ASSERT_EQ(65535, e::convert::to_uint16_t("0177777", 8));
+	}
+	catch (...)
+	{
+		FAIL();
+	}
 }
 
 TEST(ConvertTest, Uint8NormalCases)
 {
-    ASSERT_GE(sizeof(unsigned long int), sizeof(uint8_t));
-
-    try
-    {
-        ASSERT_EQ(0U, e::convert::to_uint8_t("0"));
-        ASSERT_EQ(0U, e::convert::to_uint8_t("0x0"));
-        ASSERT_EQ(0U, e::convert::to_uint8_t("0x0", 16));
-        ASSERT_EQ(0U, e::convert::to_uint8_t("00"));
-        ASSERT_EQ(0U, e::convert::to_uint8_t("00", 8));
-
-        ASSERT_EQ(255, e::convert::to_uint8_t("255"));
-        ASSERT_EQ(255, e::convert::to_uint8_t("0xff"));
-        ASSERT_EQ(255, e::convert::to_uint8_t("0xff", 16));
-        ASSERT_EQ(255, e::convert::to_uint8_t("0377"));
-        ASSERT_EQ(255, e::convert::to_uint8_t("0377", 8));
-    }
-    catch (...)
-    {
-        FAIL();
-    }
+	ASSERT_GE(sizeof(unsigned long int), sizeof(uint8_t));
+	try
+	{
+		ASSERT_EQ(0U, e::convert::to_uint8_t("0"));
+		ASSERT_EQ(0U, e::convert::to_uint8_t("0x0"));
+		ASSERT_EQ(0U, e::convert::to_uint8_t("0x0", 16));
+		ASSERT_EQ(0U, e::convert::to_uint8_t("00"));
+		ASSERT_EQ(0U, e::convert::to_uint8_t("00", 8));
+		ASSERT_EQ(255, e::convert::to_uint8_t("255"));
+		ASSERT_EQ(255, e::convert::to_uint8_t("0xff"));
+		ASSERT_EQ(255, e::convert::to_uint8_t("0xff", 16));
+		ASSERT_EQ(255, e::convert::to_uint8_t("0377"));
+		ASSERT_EQ(255, e::convert::to_uint8_t("0377", 8));
+	}
+	catch (...)
+	{
+		FAIL();
+	}
 }
 
 } // namespace

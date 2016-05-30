@@ -33,106 +33,101 @@ namespace e
 
 template <typename T1>
 int
-tuple_compare(const T1& lhs1, const T1& rhs1)
+tuple_compare(const T1 &lhs1, const T1 &rhs1)
 {
-    if (lhs1 < rhs1)
-    {
-        return -1;
-    }
-    else if (lhs1 > rhs1)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+	if (lhs1 < rhs1)
+	{
+		return -1;
+	}
+	else if (lhs1 > rhs1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 template <typename T1, typename T2>
 int
-tuple_compare(const T1& lhs1, const T2& lhs2,
-              const T1& rhs1, const T2& rhs2)
+tuple_compare(const T1 &lhs1, const T2 &lhs2,
+              const T1 &rhs1, const T2 &rhs2)
 {
-    int prefix = tuple_compare(lhs1, rhs1);
-
-    if (prefix == 0)
-    {
-        return tuple_compare(lhs2, rhs2);
-    }
-    else
-    {
-        return prefix;
-    }
+	int prefix = tuple_compare(lhs1, rhs1);
+	if (prefix == 0)
+	{
+		return tuple_compare(lhs2, rhs2);
+	}
+	else
+	{
+		return prefix;
+	}
 }
 
 template <typename T1, typename T2, typename T3>
 int
-tuple_compare(const T1& lhs1, const T2& lhs2, const T3& lhs3,
-              const T1& rhs1, const T2& rhs2, const T3& rhs3)
+tuple_compare(const T1 &lhs1, const T2 &lhs2, const T3 &lhs3,
+              const T1 &rhs1, const T2 &rhs2, const T3 &rhs3)
 {
-    int prefix = tuple_compare(lhs1, lhs2, rhs1, rhs2);
-
-    if (prefix == 0)
-    {
-        return tuple_compare(lhs3, rhs3);
-    }
-    else
-    {
-        return prefix;
-    }
+	int prefix = tuple_compare(lhs1, lhs2, rhs1, rhs2);
+	if (prefix == 0)
+	{
+		return tuple_compare(lhs3, rhs3);
+	}
+	else
+	{
+		return prefix;
+	}
 }
 
 template <typename T1, typename T2, typename T3, typename T4>
 int
-tuple_compare(const T1& lhs1, const T2& lhs2, const T3& lhs3, const T4& lhs4,
-              const T1& rhs1, const T2& rhs2, const T3& rhs3, const T4& rhs4)
+tuple_compare(const T1 &lhs1, const T2 &lhs2, const T3 &lhs3, const T4 &lhs4,
+              const T1 &rhs1, const T2 &rhs2, const T3 &rhs3, const T4 &rhs4)
 {
-    int prefix = tuple_compare(lhs1, lhs2, lhs3, rhs1, rhs2, rhs3);
-
-    if (prefix == 0)
-    {
-        return tuple_compare(lhs4, rhs4);
-    }
-    else
-    {
-        return prefix;
-    }
+	int prefix = tuple_compare(lhs1, lhs2, lhs3, rhs1, rhs2, rhs3);
+	if (prefix == 0)
+	{
+		return tuple_compare(lhs4, rhs4);
+	}
+	else
+	{
+		return prefix;
+	}
 }
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5>
 int
-tuple_compare(const T1& lhs1, const T2& lhs2, const T3& lhs3, const T4& lhs4, const T5& lhs5,
-              const T1& rhs1, const T2& rhs2, const T3& rhs3, const T4& rhs4, const T5& rhs5)
+tuple_compare(const T1 &lhs1, const T2 &lhs2, const T3 &lhs3, const T4 &lhs4, const T5 &lhs5,
+              const T1 &rhs1, const T2 &rhs2, const T3 &rhs3, const T4 &rhs4, const T5 &rhs5)
 {
-    int prefix = tuple_compare(lhs1, lhs2, lhs3, lhs4, rhs1, rhs2, rhs3, rhs4);
-
-    if (prefix == 0)
-    {
-        return tuple_compare(lhs5, rhs5);
-    }
-    else
-    {
-        return prefix;
-    }
+	int prefix = tuple_compare(lhs1, lhs2, lhs3, lhs4, rhs1, rhs2, rhs3, rhs4);
+	if (prefix == 0)
+	{
+		return tuple_compare(lhs5, rhs5);
+	}
+	else
+	{
+		return prefix;
+	}
 }
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 int
-tuple_compare(const T1& lhs1, const T2& lhs2, const T3& lhs3, const T4& lhs4, const T5& lhs5, const T6& lhs6,
-              const T1& rhs1, const T2& rhs2, const T3& rhs3, const T4& rhs4, const T5& rhs5, const T6& rhs6)
+tuple_compare(const T1 &lhs1, const T2 &lhs2, const T3 &lhs3, const T4 &lhs4, const T5 &lhs5, const T6 &lhs6,
+              const T1 &rhs1, const T2 &rhs2, const T3 &rhs3, const T4 &rhs4, const T5 &rhs5, const T6 &rhs6)
 {
-    int prefix = tuple_compare(lhs1, lhs2, lhs3, lhs4, lhs5,
-                               rhs1, rhs2, rhs3, rhs4, rhs5);
-
-    if (prefix == 0)
-    {
-        return tuple_compare(lhs6, rhs6);
-    }
-    else
-    {
-        return prefix;
-    }
+	int prefix = tuple_compare(lhs1, lhs2, lhs3, lhs4, lhs5,
+	                           rhs1, rhs2, rhs3, rhs4, rhs5);
+	if (prefix == 0)
+	{
+		return tuple_compare(lhs6, rhs6);
+	}
+	else
+	{
+		return prefix;
+	}
 }
 
 } // namespace e

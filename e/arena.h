@@ -40,32 +40,32 @@ class buffer;
 
 class arena
 {
-    public:
-        arena();
-        ~arena();
+public:
+	arena();
+	~arena();
 
-    public:
-        void reserve(size_t sz);
-        void allocate(size_t sz, char** ptr);
-        void allocate(size_t sz, unsigned char** ptr);
-        void takeover(char* ptr);
-        void takeover(unsigned char* ptr);
-        void takeover(void* ptr);
-        void takeover(e::buffer* buf);
-        void clear();
+public:
+	void reserve(size_t sz);
+	void allocate(size_t sz, char **ptr);
+	void allocate(size_t sz, unsigned char **ptr);
+	void takeover(char *ptr);
+	void takeover(unsigned char *ptr);
+	void takeover(void *ptr);
+	void takeover(e::buffer *buf);
+	void clear();
 
-    private:
-        arena(const arena&);
-        arena& operator = (const arena&);
+private:
+	arena(const arena &);
+	arena &operator = (const arena &);
 
-    private:
-        void raw_allocate(size_t sz, unsigned char** ptr);
+private:
+	void raw_allocate(size_t sz, unsigned char **ptr);
 
-    private:
-        std::vector<unsigned char*> m_to_free;
-        std::vector<e::buffer*> m_buffers;
-        unsigned char* m_start;
-        unsigned char* m_limit;
+private:
+	std::vector<unsigned char *> m_to_free;
+	std::vector<e::buffer *> m_buffers;
+	unsigned char *m_start;
+	unsigned char *m_limit;
 };
 
 } // namespace e

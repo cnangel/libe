@@ -34,39 +34,38 @@ namespace
 
 TEST(ArrayPtr, CtorAndDtor)
 {
-    e::array_ptr<int> a;
-    e::array_ptr<int> b(new int[1]);
-    e::array_ptr<int> c(b);
+	e::array_ptr<int> a;
+	e::array_ptr<int> b(new int[1]);
+	e::array_ptr<int> c(b);
 }
 
 TEST(ArrayPtr, BoolOperator)
 {
-    e::array_ptr<int> x;
-    ASSERT_FALSE(x);
-    x = new int[5];
-    ASSERT_TRUE(x);
+	e::array_ptr<int> x;
+	ASSERT_FALSE(x);
+	x = new int[5];
+	ASSERT_TRUE(x);
 }
 
 TEST(ArrayPtr, BracketOperator)
 {
-    e::array_ptr<int> x(new int[5]);
-    x[0] = 0;
-    x[1] = 1;
-    x[2] = 2;
-    x[3] = 3;
-    x[4] = 4;
-    ASSERT_EQ(0, x[0]);
-    ASSERT_EQ(1, x[1]);
-    ASSERT_EQ(2, x[2]);
-    ASSERT_EQ(3, x[3]);
-    ASSERT_EQ(4, x[4]);
-
-    const e::array_ptr<int> y(x);
-    ASSERT_EQ(0, y[0]);
-    ASSERT_EQ(1, y[1]);
-    ASSERT_EQ(2, y[2]);
-    ASSERT_EQ(3, y[3]);
-    ASSERT_EQ(4, y[4]);
+	e::array_ptr<int> x(new int[5]);
+	x[0] = 0;
+	x[1] = 1;
+	x[2] = 2;
+	x[3] = 3;
+	x[4] = 4;
+	ASSERT_EQ(0, x[0]);
+	ASSERT_EQ(1, x[1]);
+	ASSERT_EQ(2, x[2]);
+	ASSERT_EQ(3, x[3]);
+	ASSERT_EQ(4, x[4]);
+	const e::array_ptr<int> y(x);
+	ASSERT_EQ(0, y[0]);
+	ASSERT_EQ(1, y[1]);
+	ASSERT_EQ(2, y[2]);
+	ASSERT_EQ(3, y[3]);
+	ASSERT_EQ(4, y[4]);
 }
 
 }

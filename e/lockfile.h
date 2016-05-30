@@ -37,22 +37,22 @@ namespace e
 
 class lockfile
 {
-    public:
-        lockfile();
-        virtual ~lockfile() throw ();
+public:
+	lockfile();
+	virtual ~lockfile() throw ();
 
-    public:
-        PO6_WARN_UNUSED bool lock(const char* name);
-        PO6_WARN_UNUSED bool lock(int fd);
+public:
+	PO6_WARN_UNUSED bool lock(const char *name);
+	PO6_WARN_UNUSED bool lock(int fd);
 
-    private:
-        po6::io::fd m_fd;
-        dev_t m_dev;
-        ino_t m_ino;
+private:
+	po6::io::fd m_fd;
+	dev_t m_dev;
+	ino_t m_ino;
 
-    private:
-        lockfile(const lockfile&);
-        lockfile& operator = (const lockfile&);
+private:
+	lockfile(const lockfile &);
+	lockfile &operator = (const lockfile &);
 };
 
 } // namespace e

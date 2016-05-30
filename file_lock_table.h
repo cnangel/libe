@@ -42,26 +42,26 @@ namespace e
 
 class file_lock_table
 {
-    public:
-        static file_lock_table* the_one_and_only();
+public:
+	static file_lock_table *the_one_and_only();
 
-    public:
-        file_lock_table();
-        ~file_lock_table() throw ();
+public:
+	file_lock_table();
+	~file_lock_table() throw ();
 
-    public:
-        bool acquire(dev_t dev, ino_t ino);
-        void release(dev_t dev, ino_t ino);
+public:
+	bool acquire(dev_t dev, ino_t ino);
+	void release(dev_t dev, ino_t ino);
 
-    private:
-        typedef std::pair<dev_t, ino_t> file_t;
-        typedef std::set<file_t> file_map_t;
-        po6::threads::mutex m_mtx;
-        file_map_t m_files;
+private:
+	typedef std::pair<dev_t, ino_t> file_t;
+	typedef std::set<file_t> file_map_t;
+	po6::threads::mutex m_mtx;
+	file_map_t m_files;
 
-    private:
-        file_lock_table(const file_lock_table&);
-        file_lock_table& operator = (const file_lock_table&);
+private:
+	file_lock_table(const file_lock_table &);
+	file_lock_table &operator = (const file_lock_table &);
 };
 
 } // namespace e

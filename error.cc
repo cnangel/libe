@@ -31,20 +31,20 @@
 using e::error;
 
 error :: error()
-    : m_msg()
-    , m_msg_s()
-    , m_loc_s()
-    , m_file("")
-    , m_line(0)
+	: m_msg()
+	, m_msg_s()
+	, m_loc_s()
+	, m_file("")
+	, m_line(0)
 {
 }
 
-error :: error(const error& other)
-    : m_msg(other.m_msg.str())
-    , m_msg_s(other.m_msg_s)
-    , m_loc_s(other.m_loc_s)
-    , m_file(other.m_file)
-    , m_line(other.m_line)
+error :: error(const error &other)
+	: m_msg(other.m_msg.str())
+	, m_msg_s(other.m_msg_s)
+	, m_loc_s(other.m_loc_s)
+	, m_file(other.m_file)
+	, m_line(other.m_line)
 {
 }
 
@@ -52,51 +52,50 @@ error :: ~error() throw ()
 {
 }
 
-const char*
+const char *
 error :: loc()
 {
-    char buf[21];
-    snprintf(buf, 21, "%lu", m_line);
-    m_loc_s  = m_file;
-    m_loc_s += ":";
-    m_loc_s += buf;
-    return m_loc_s.c_str();
+	char buf[21];
+	snprintf(buf, 21, "%lu", m_line);
+	m_loc_s  = m_file;
+	m_loc_s += ":";
+	m_loc_s += buf;
+	return m_loc_s.c_str();
 }
 
-const char*
+const char *
 error :: msg()
 {
-    m_msg_s = m_msg.str();
-    return m_msg_s.c_str();
+	m_msg_s = m_msg.str();
+	return m_msg_s.c_str();
 }
 
 void
-error :: set_loc(const char* file, size_t line)
+error :: set_loc(const char *file, size_t line)
 {
-    m_file = file;
-    m_line = line;
+	m_file = file;
+	m_line = line;
 }
 
-std::ostream&
+std::ostream &
 error :: set_msg()
 {
-    m_msg.str("");
-    m_msg.clear();
-    return m_msg;
+	m_msg.str("");
+	m_msg.clear();
+	return m_msg;
 }
 
-error&
-error :: operator = (const error& rhs)
+error &
+error :: operator = (const error &rhs)
 {
-    if (this != &rhs)
-    {
-        m_msg.str(rhs.m_msg.str());
-        m_msg.clear();
-        m_msg_s = rhs.m_msg_s;
-        m_loc_s = rhs.m_loc_s;
-        m_file = rhs.m_file;
-        m_line = rhs.m_line;
-    }
-
-    return *this;
+	if (this != &rhs)
+	{
+		m_msg.str(rhs.m_msg.str());
+		m_msg.clear();
+		m_msg_s = rhs.m_msg_s;
+		m_loc_s = rhs.m_loc_s;
+		m_file = rhs.m_file;
+		m_line = rhs.m_line;
+	}
+	return *this;
 }

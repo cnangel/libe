@@ -43,55 +43,55 @@ namespace e
 
 class garbage_collector
 {
-    public:
-        class thread_state;
-        template<typename T> static void free_ptr(void* ptr) { delete static_cast<T*>(ptr); }
+public:
+	class thread_state;
+	template<typename T> static void free_ptr(void *ptr) { delete static_cast<T *>(ptr); }
 
-    public:
-        garbage_collector();
-        ~garbage_collector() throw ();
+public:
+	garbage_collector();
+	~garbage_collector() throw ();
 
-    public:
-        void register_thread(thread_state* ts);
-        void deregister_thread(thread_state* ts);
-        void quiescent_state(thread_state* ts);
-        void offline(thread_state* ts);
-        void online(thread_state* ts);
-        void collect(void* ptr, void(*func)(void* ptr));
+public:
+	void register_thread(thread_state *ts);
+	void deregister_thread(thread_state *ts);
+	void quiescent_state(thread_state *ts);
+	void offline(thread_state *ts);
+	void online(thread_state *ts);
+	void collect(void *ptr, void(*func)(void *ptr));
 
-    private:
-        class thread_state_node;
-        class garbage;
-        // read_timestamp is a full-barrier operation
-        uint64_t read_timestamp();
-        void enqueue(garbage* volatile* list, garbage* g);
+private:
+	class thread_state_node;
+	class garbage;
+	// read_timestamp is a full-barrier operation
+	uint64_t read_timestamp();
+	void enqueue(garbage *volatile *list, garbage *g);
 
-    private:
-        uint64_t m_timestamp;
-        uint64_t m_offline_transitions;
-        uint64_t m_minimum;
-        thread_state_node* m_registered;
-        garbage* m_garbage;
-        po6::threads::mutex m_protect_registration;
+private:
+	uint64_t m_timestamp;
+	uint64_t m_offline_transitions;
+	uint64_t m_minimum;
+	thread_state_node *m_registered;
+	garbage *m_garbage;
+	po6::threads::mutex m_protect_registration;
 
-    private:
-        garbage_collector(const garbage_collector&);
-        garbage_collector& operator = (const garbage_collector&);
+private:
+	garbage_collector(const garbage_collector &);
+	garbage_collector &operator = (const garbage_collector &);
 };
 
 class garbage_collector::thread_state
 {
-    public:
-        thread_state() : m_tsn(NULL) {}
-        ~thread_state() throw () {}
+public:
+	thread_state() : m_tsn(NULL) {}
+	~thread_state() throw () {}
 
-    private:
-        friend class garbage_collector;
-        thread_state_node* m_tsn;
+private:
+	friend class garbage_collector;
+	thread_state_node *m_tsn;
 
-    private:
-        thread_state(const thread_state&);
-        thread_state& operator = (const thread_state&);
+private:
+	thread_state(const thread_state &);
+	thread_state &operator = (const thread_state &);
 };
 
 } // namespace e

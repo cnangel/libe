@@ -41,86 +41,78 @@
 using e::lockfile;
 
 lockfile :: lockfile()
-    : m_fd()
-    , m_dev(0)
-    , m_ino(0)
+	: m_fd()
+	, m_dev(0)
+	, m_ino(0)
 {
 }
 
 lockfile :: ~lockfile() throw ()
 {
-    if (m_fd.get())
-    {
-        file_lock_table* flt = file_lock_table::the_one_and_only();
-        assert(flt);
-        flt->release(m_dev, m_ino);
-    }
+	if (m_fd.get())
+	{
+		file_lock_table *flt = file_lock_table::the_one_and_only();
+		assert(flt);
+		flt->release(m_dev, m_ino);
+	}
 }
 
 bool
-lockfile :: lock(const char* name)
+lockfile :: lock(const char *name)
 {
-    int fd = open(name, O_RDWR|O_CREAT, S_IRWXU);
-
-    if (fd < 0)
-    {
-        return false;
-    }
-
-    if (!lock(fd))
-    {
-        close(fd);
-        return false;
-    }
-
-    return true;
+	int fd = open(name, O_RDWR | O_CREAT, S_IRWXU);
+	if (fd < 0)
+	{
+		return false;
+	}
+	if (!lock(fd))
+	{
+		close(fd);
+		return false;
+	}
+	return true;
 }
 
 bool
 lockfile :: lock(int fd)
 {
-    assert(fd >= 0);
-    assert(m_fd.get() < 0);
-    m_fd = fd;
-    struct stat stbuf;
-
-    if (fstat(m_fd.get(), &stbuf) < 0)
-    {
-        m_fd.close();
-        return false;
-    }
-
-    m_dev = stbuf.st_dev;
-    m_ino = stbuf.st_ino;
-    file_lock_table* flt = file_lock_table::the_one_and_only();
-    assert(flt);
-
-    struct flock f;
-    memset(&f, 0, sizeof(f));
-    f.l_type = F_WRLCK;
-    f.l_whence = SEEK_SET;
-    f.l_start = 0;
-    f.l_len = 0;
-
-    if (fcntl(m_fd.get(), F_SETLK, &f) < 0 ||
-        !flt->acquire(m_dev, m_ino))
-    {
-        m_fd.close();
-        return false;
-    }
-
-    return true;
+	assert(fd >= 0);
+	assert(m_fd.get() < 0);
+	m_fd = fd;
+	struct stat stbuf;
+	if (fstat(m_fd.get(), &stbuf) < 0)
+	{
+		m_fd.close();
+		return false;
+	}
+	m_dev = stbuf.st_dev;
+	m_ino = stbuf.st_ino;
+	file_lock_table *flt = file_lock_table::the_one_and_only();
+	assert(flt);
+	struct flock f;
+	memset(&f, 0, sizeof(f));
+	f.l_type = F_WRLCK;
+	f.l_whence = SEEK_SET;
+	f.l_start = 0;
+	f.l_len = 0;
+	if (fcntl(m_fd.get(), F_SETLK, &f) < 0 ||
+	    !flt->acquire(m_dev, m_ino))
+	{
+		m_fd.close();
+		return false;
+	}
+	return true;
 }
 
 #if 0
 
 
-    m_dir_fd = dir_fd;
-    m_lock_fd = lock_fd;
-    m_lock_dev = stbuf.st_dev;
-    m_lock_ino = stbuf.st_ino;
-    g_flt.dismiss();
-    g_lock_fd.dismiss();
-    g_dir_fd.dismiss();
-    return true;
+m_dir_fd = dir_fd;
+m_lock_fd = lock_fd;
+m_lock_dev = stbuf.st_dev;
+m_lock_ino = stbuf.st_ino;
+g_flt.dismiss();
+g_lock_fd.dismiss();
+g_dir_fd.dismiss();
+return true;
 #endif

@@ -42,150 +42,126 @@
 #include "e/identity.h"
 
 static bool
-atomic_read(const char* path, std::string* contents)
+atomic_read(const char *path, std::string *contents)
 {
-    contents->clear();
-    po6::io::fd fd(open(path, O_RDONLY));
-
-    if (fd.get() < 0)
-    {
-        return false;
-    }
-
-    char buf[512];
-    ssize_t amt;
-
-    while ((amt = fd.xread(buf, 512)) > 0)
-    {
-        contents->append(buf, amt);
-    }
-
-    return amt == 0;
+	contents->clear();
+	po6::io::fd fd(open(path, O_RDONLY));
+	if (fd.get() < 0)
+	{
+		return false;
+	}
+	char buf[512];
+	ssize_t amt;
+	while ((amt = fd.xread(buf, 512)) > 0)
+	{
+		contents->append(buf, amt);
+	}
+	return amt == 0;
 }
 
 static bool
-atomic_write(const char* path, const std::string& contents)
+atomic_write(const char *path, const std::string &contents)
 {
-    std::string tmp(path);
-    tmp += ".tmp";
-    po6::io::fd fd(open(tmp.c_str(), O_WRONLY|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR));
-    return fd.get() >= 0 &&
-           fd.xwrite(contents.data(), contents.size()) == ssize_t(contents.size()) &&
-           fsync(fd.get()) >= 0 &&
-           rename(tmp.c_str(), path) >= 0;
+	std::string tmp(path);
+	tmp += ".tmp";
+	po6::io::fd fd(open(tmp.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR));
+	return fd.get() >= 0 &&
+	       fd.xwrite(contents.data(), contents.size()) == ssize_t(contents.size()) &&
+	       fsync(fd.get()) >= 0 &&
+	       rename(tmp.c_str(), path) >= 0;
 }
 
 bool
-e :: load_identity(const char* path, bool* saved, uint64_t* id,
-                   bool set_bind_to, po6::net::location* bind_to,
-                   bool set_rendezvous, std::string* rendezvous)
+e :: load_identity(const char *path, bool *saved, uint64_t *id,
+                   bool set_bind_to, po6::net::location *bind_to,
+                   bool set_rendezvous, std::string *rendezvous)
 {
-    std::string ident;
-
-    if (!atomic_read(path, &ident))
-    {
-        if (errno != ENOENT)
-        {
-            return false;
-        }
-
-        *saved = false;
-        return true;
-    }
-
-    *saved = true;
-    std::vector<char> buf(ident.c_str(), ident.c_str() + ident.size() + 1);
-    const char* ptr = &buf[0];
-    const char* const end = ptr + buf.size();
-    const char* eol = NULL;
-    char* tmp = NULL;
-
-    if (strncmp(ptr, "id=", 3) != 0)
-    {
-        return false;
-    }
-
-    ptr += 3;
-    errno = 0;
-    *id = strtoull(ptr, &tmp, 10);
-
-    if (errno != 0 || *tmp != '\n')
-    {
-        return false;
-    }
-
-    *tmp = '\0';
-    ptr = tmp + 1;
-
-    if (strncmp(ptr, "bind_to=", 8) != 0)
-    {
-        return false;
-    }
-
-    ptr += 8;
-    eol = strchr(ptr, '\n');
-
-    if (!eol)
-    {
-        return false;
-    }
-
-    tmp = &buf[0] + (eol - &buf[0]);
-    *tmp = '\0';
-    const char* colon = strrchr(ptr, ':');
-
-    if (!colon)
-    {
-        return false;
-    }
-
-    errno = 0;
-    unsigned long port = strtoul(colon + 1, &tmp, 10);
-
-    if (errno != 0 || *tmp != '\0')
-    {
-        return false;
-    }
-
-    std::string host;
-
-    if (*ptr == '[' && colon > ptr && *(colon - 1) == ']')
-    {
-        host.assign(ptr + 1, colon - 1);
-    }
-    else
-    {
-        host.assign(ptr, colon);
-    }
-
-    if (!set_bind_to)
-    {
-        if (!bind_to->set(host.c_str(), port))
-        {
-            return false;
-        }
-    }
-
-    ptr = eol + 1;
-
-    if (ptr < end && !set_rendezvous)
-    {
-        eol = strchr(ptr, '\n');
-        eol = eol ? eol : end;
-        *rendezvous = std::string(ptr, eol);
-    }
-
-    return true;
+	std::string ident;
+	if (!atomic_read(path, &ident))
+	{
+		if (errno != ENOENT)
+		{
+			return false;
+		}
+		*saved = false;
+		return true;
+	}
+	*saved = true;
+	std::vector<char> buf(ident.c_str(), ident.c_str() + ident.size() + 1);
+	const char *ptr = &buf[0];
+	const char *const end = ptr + buf.size();
+	const char *eol = NULL;
+	char *tmp = NULL;
+	if (strncmp(ptr, "id=", 3) != 0)
+	{
+		return false;
+	}
+	ptr += 3;
+	errno = 0;
+	*id = strtoull(ptr, &tmp, 10);
+	if (errno != 0 || *tmp != '\n')
+	{
+		return false;
+	}
+	*tmp = '\0';
+	ptr = tmp + 1;
+	if (strncmp(ptr, "bind_to=", 8) != 0)
+	{
+		return false;
+	}
+	ptr += 8;
+	eol = strchr(ptr, '\n');
+	if (!eol)
+	{
+		return false;
+	}
+	tmp = &buf[0] + (eol - &buf[0]);
+	*tmp = '\0';
+	const char *colon = strrchr(ptr, ':');
+	if (!colon)
+	{
+		return false;
+	}
+	errno = 0;
+	unsigned long port = strtoul(colon + 1, &tmp, 10);
+	if (errno != 0 || *tmp != '\0')
+	{
+		return false;
+	}
+	std::string host;
+	if (*ptr == '[' && colon > ptr && *(colon - 1) == ']')
+	{
+		host.assign(ptr + 1, colon - 1);
+	}
+	else
+	{
+		host.assign(ptr, colon);
+	}
+	if (!set_bind_to)
+	{
+		if (!bind_to->set(host.c_str(), port))
+		{
+			return false;
+		}
+	}
+	ptr = eol + 1;
+	if (ptr < end && !set_rendezvous)
+	{
+		eol = strchr(ptr, '\n');
+		eol = eol ? eol : end;
+		*rendezvous = std::string(ptr, eol);
+	}
+	return true;
 }
 
 bool
-e :: save_identity(const char* path, uint64_t id,
-                   const po6::net::location& bind_to,
-                   const std::string& rendezvous)
+e :: save_identity(const char *path, uint64_t id,
+                   const po6::net::location &bind_to,
+                   const std::string &rendezvous)
 {
-    std::ostringstream ostr;
-    ostr << "id=" << id << "\n"
-         << "bind_to=" << bind_to << "\n"
-         << rendezvous << "\n";
-    return atomic_write(path, ostr.str());
+	std::ostringstream ostr;
+	ostr << "id=" << id << "\n"
+	     << "bind_to=" << bind_to << "\n"
+	     << rendezvous << "\n";
+	return atomic_write(path, ostr.str());
 }

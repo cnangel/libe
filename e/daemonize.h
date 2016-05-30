@@ -49,65 +49,56 @@ daemonize(bool background,
           std::string log_prefix,
           std::string pidfile,
           bool has_pidfile
-        )
+         )
 {
-    google::LogToStderr();
-
-    if (background)
-    {
-        char buf[PATH_MAX];
-        char* cwd = getcwd(buf, PATH_MAX);
-
-        if (!cwd)
-        {
-            LOG(ERROR) << "could not get current working directory";
-            return false;
-        }
-
-        log = po6::path::join(cwd, log);
-        struct stat x;
-
-        if (lstat(log.c_str(), &x) < 0 || !S_ISDIR(x.st_mode))
-        {
-            LOG(ERROR) << "cannot fork off to the background because "
-                       << log << " does not exist or is not writable";
-            return false;
-        }
-
-        if (!has_pidfile)
-        {
-            LOG(INFO) << "forking off to the background";
-            LOG(INFO) << "you can find the log at " << log << "/" << log_prefix << "YYYYMMDD-HHMMSS.sssss";
-            LOG(INFO) << "provide \"--foreground\" on the command-line if you want to run in the foreground";
-        }
-
-        google::SetLogSymlink(google::INFO, "");
-        google::SetLogSymlink(google::WARNING, "");
-        google::SetLogSymlink(google::ERROR, "");
-        google::SetLogSymlink(google::FATAL, "");
-        log = po6::path::join(log, log_prefix);
-        google::SetLogDestination(google::INFO, log.c_str());
-
-        if (::daemon(1, 0) < 0)
-        {
-            PLOG(ERROR) << "could not daemonize";
-            return false;
-        }
-
-        if (has_pidfile && !create_pidfile(pidfile))
-        {
-            PLOG(ERROR) << "could not create pidfile " << pidfile.c_str();
-            return false;
-        }
-    }
-    else
-    {
-        LOG(INFO) << "running in the foreground";
-        LOG(INFO) << "no log will be generated; instead, the log messages will print to the terminal";
-        LOG(INFO) << "provide \"--daemon\" on the command-line if you want to run in the background";
-    }
-
-    return true;
+	google::LogToStderr();
+	if (background)
+	{
+		char buf[PATH_MAX];
+		char *cwd = getcwd(buf, PATH_MAX);
+		if (!cwd)
+		{
+			LOG(ERROR) << "could not get current working directory";
+			return false;
+		}
+		log = po6::path::join(cwd, log);
+		struct stat x;
+		if (lstat(log.c_str(), &x) < 0 || !S_ISDIR(x.st_mode))
+		{
+			LOG(ERROR) << "cannot fork off to the background because "
+			           << log << " does not exist or is not writable";
+			return false;
+		}
+		if (!has_pidfile)
+		{
+			LOG(INFO) << "forking off to the background";
+			LOG(INFO) << "you can find the log at " << log << "/" << log_prefix << "YYYYMMDD-HHMMSS.sssss";
+			LOG(INFO) << "provide \"--foreground\" on the command-line if you want to run in the foreground";
+		}
+		google::SetLogSymlink(google::INFO, "");
+		google::SetLogSymlink(google::WARNING, "");
+		google::SetLogSymlink(google::ERROR, "");
+		google::SetLogSymlink(google::FATAL, "");
+		log = po6::path::join(log, log_prefix);
+		google::SetLogDestination(google::INFO, log.c_str());
+		if (::daemon(1, 0) < 0)
+		{
+			PLOG(ERROR) << "could not daemonize";
+			return false;
+		}
+		if (has_pidfile && !create_pidfile(pidfile))
+		{
+			PLOG(ERROR) << "could not create pidfile " << pidfile.c_str();
+			return false;
+		}
+	}
+	else
+	{
+		LOG(INFO) << "running in the foreground";
+		LOG(INFO) << "no log will be generated; instead, the log messages will print to the terminal";
+		LOG(INFO) << "provide \"--daemon\" on the command-line if you want to run in the background";
+	}
+	return true;
 }
 
 } // namespace e

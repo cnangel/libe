@@ -36,31 +36,31 @@
 
 using e::buffer;
 
-void*
+void *
 buffer :: operator new (size_t, size_t num)
 {
-    return new char[offsetof(buffer, m_data) + num];
+	return new char[offsetof(buffer, m_data) + num];
 }
 
 void
-buffer :: operator delete (void* mem)
+buffer :: operator delete (void *mem)
 {
-    delete[] static_cast<char*>(mem);
+	delete[] static_cast<char *>(mem);
 }
 
 buffer :: buffer(size_t sz)
-    : m_cap(sz)
-    , m_size(0)
-    , m_data()
+	: m_cap(sz)
+	, m_size(0)
+	, m_data()
 {
 }
 
-buffer :: buffer(const char* buf, size_t sz)
-    : m_cap(sz)
-    , m_size(sz)
-    , m_data()
+buffer :: buffer(const char *buf, size_t sz)
+	: m_cap(sz)
+	, m_size(sz)
+	, m_data()
 {
-    memmove(m_data, buf, sz);
+	memmove(m_data, buf, sz);
 }
 
 buffer :: ~buffer() throw ()
@@ -68,58 +68,56 @@ buffer :: ~buffer() throw ()
 }
 
 bool
-buffer :: cmp(const char* buf, size_t sz) const
+buffer :: cmp(const char *buf, size_t sz) const
 {
-    if (m_size == sz)
-    {
-        return memcmp(m_data, buf, sz) == 0;
-    }
-
-    return false;
+	if (m_size == sz)
+	{
+		return memcmp(m_data, buf, sz) == 0;
+	}
+	return false;
 }
 
-buffer*
+buffer *
 buffer :: copy() const
 {
-    std::auto_ptr<buffer> ret(create(m_cap));
-    ret->m_cap = m_cap;
-    ret->m_size = m_size;
-    memmove(ret->m_data, m_data, m_cap);
-    return ret.release();
+	std::auto_ptr<buffer> ret(create(m_cap));
+	ret->m_cap = m_cap;
+	ret->m_size = m_size;
+	memmove(ret->m_data, m_data, m_cap);
+	return ret.release();
 }
 
 void
 buffer :: resize(size_t sz)
 {
-    assert(sz <= m_cap);
-    m_size = sz;
+	assert(sz <= m_cap);
+	m_size = sz;
 }
 
 e::packer
 buffer :: pack()
 {
-    return pack_at(0);
+	return pack_at(0);
 }
 
 e::packer
 buffer :: pack_at(size_t off)
 {
-    return packer(this, off);
+	return packer(this, off);
 }
 
 e::unpacker
 buffer :: unpack()
 {
-    return unpack_from(0);
+	return unpack_from(0);
 }
 
 e::unpacker
 buffer :: unpack_from(size_t off)
 {
-    if (off > m_size)
-    {
-        return e::unpacker::error_out();
-    }
-
-    return e::unpacker(m_data + off, m_size - off);
+	if (off > m_size)
+	{
+		return e::unpacker::error_out();
+	}
+	return e::unpacker(m_data + off, m_size - off);
 }

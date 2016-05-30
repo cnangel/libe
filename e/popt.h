@@ -54,359 +54,340 @@ class argparser;
 
 class argparser
 {
-    public:
-        argparser();
-        argparser(const argparser&);
-        ~argparser() throw ();
+public:
+	argparser();
+	argparser(const argparser &);
+	~argparser() throw ();
 
-    public:
-        void help();
-        void usage();
-        bool parse(int argc, const char* argv[]);
-        const char** args();
-        size_t args_sz();
+public:
+	void help();
+	void usage();
+	bool parse(int argc, const char *argv[]);
+	const char **args();
+	size_t args_sz();
 
-    public:
-        void option_string(const char*);
-        void autohelp();
-        argument& arg();
-        void add(const char* name, const argparser&);
+public:
+	void option_string(const char *);
+	void autohelp();
+	argument &arg();
+	void add(const char *name, const argparser &);
 
-    public:
-        argparser& operator = (const argparser&);
+public:
+	argparser &operator = (const argparser &);
 
-    private:
-        size_t size();
-        size_t layout(size_t start);
-        void handle(size_t which);
+private:
+	size_t size();
+	size_t layout(size_t start);
+	void handle(size_t which);
 
-    private:
-        bool m_autohelp;
-        const char* m_optstr;
-        poptContext m_ctx;
-        const char** m_args;
-        size_t m_args_sz;
-        std::vector<poptOption> m_popts;
-        std::vector<argument> m_arguments;
-        std::vector<std::pair<std::string, argparser> > m_subparsers;
+private:
+	bool m_autohelp;
+	const char *m_optstr;
+	poptContext m_ctx;
+	const char **m_args;
+	size_t m_args_sz;
+	std::vector<poptOption> m_popts;
+	std::vector<argument> m_arguments;
+	std::vector<std::pair<std::string, argparser> > m_subparsers;
 };
 
 class argument
 {
-    public:
-        argument();
-        argument(const argument& other);
-        ~argument() throw ();
+public:
+	argument();
+	argument(const argument &other);
+	~argument() throw ();
 
-    public:
-        poptOption option() { return m_opt; }
+public:
+	poptOption option() { return m_opt; }
 
-    public:
-        argument& name(char sn, const char* ln);
-        argument& long_name(const char* n);
-        argument& short_name(char n);
-        argument& description(const char* desc);
-        argument& metavar(const char* meta);
-        argument& as_string(const char** v);
-        argument& as_long(long* v);
-        argument& as_double(double* v);
-        argument& set_true(bool* b);
-        argument& set_false(bool* b);
-        argument& hidden();
+public:
+	argument &name(char sn, const char *ln);
+	argument &long_name(const char *n);
+	argument &short_name(char n);
+	argument &description(const char *desc);
+	argument &metavar(const char *meta);
+	argument &as_string(const char **v);
+	argument &as_long(long *v);
+	argument &as_double(double *v);
+	argument &set_true(bool *b);
+	argument &set_false(bool *b);
+	argument &hidden();
 
-    public:
-        argument& operator = (const argument& rhs);
+public:
+	argument &operator = (const argument &rhs);
 
-    private:
-        friend class argparser;
+private:
+	friend class argparser;
 
-    private:
-        void reset_opt();
+private:
+	void reset_opt();
 
-    private:
-        poptOption m_opt;
-        char m_shortn;
-        std::string m_longn;
-        std::string m_desc;
-        std::string m_meta;
-        bool* m_true;
-        bool* m_false;
+private:
+	poptOption m_opt;
+	char m_shortn;
+	std::string m_longn;
+	std::string m_desc;
+	std::string m_meta;
+	bool *m_true;
+	bool *m_false;
 };
 
 inline
 argparser :: argparser()
-    : m_autohelp(false)
-    , m_optstr(NULL)
-    , m_ctx(NULL)
-    , m_args(NULL)
-    , m_args_sz(0)
-    , m_popts()
-    , m_arguments()
-    , m_subparsers()
+	: m_autohelp(false)
+	, m_optstr(NULL)
+	, m_ctx(NULL)
+	, m_args(NULL)
+	, m_args_sz(0)
+	, m_popts()
+	, m_arguments()
+	, m_subparsers()
 {
 }
 
 inline
-argparser :: argparser(const argparser& other)
-    : m_autohelp(other.m_autohelp)
-    , m_optstr(other.m_optstr)
-    , m_ctx(other.m_ctx)
-    , m_args(other.m_args)
-    , m_args_sz(other.m_args_sz)
-    , m_popts(other.m_popts)
-    , m_arguments(other.m_arguments)
-    , m_subparsers(other.m_subparsers)
+argparser :: argparser(const argparser &other)
+	: m_autohelp(other.m_autohelp)
+	, m_optstr(other.m_optstr)
+	, m_ctx(other.m_ctx)
+	, m_args(other.m_args)
+	, m_args_sz(other.m_args_sz)
+	, m_popts(other.m_popts)
+	, m_arguments(other.m_arguments)
+	, m_subparsers(other.m_subparsers)
 {
 }
 
 inline
 argparser :: ~argparser() throw ()
 {
-    if (m_ctx)
-    {
-        poptFreeContext(m_ctx);
-    }
+	if (m_ctx)
+	{
+		poptFreeContext(m_ctx);
+	}
 }
 
 inline void
 argparser :: help()
 {
-    poptPrintHelp(m_ctx, stdout, 0);
+	poptPrintHelp(m_ctx, stdout, 0);
 }
 
 inline void
 argparser :: usage()
 {
-    poptPrintUsage(m_ctx, stdout, 0);
+	poptPrintUsage(m_ctx, stdout, 0);
 }
 
 inline bool
-argparser :: parse(int argc, const char* argv[])
+argparser :: parse(int argc, const char *argv[])
 {
-    assert(argc > 0);
-    std::string pretty = po6::path::basename(argv[0]);
-    argv[0] = pretty.c_str();
-
-    if (strncmp(argv[0], "lt-", 3) == 0)
-    {
-        argv[0] += 3;
-    }
-
-    assert(m_ctx == NULL);
-    int rc;
-    layout(1);
-    m_ctx = poptGetContext(NULL, argc, argv, &m_popts.front(),
-                           POPT_CONTEXT_POSIXMEHARDER);
-
-    if (m_optstr)
-    {
-        poptSetOtherOptionHelp(m_ctx, m_optstr);
-    }
-
-    while ((rc = poptGetNextOpt(m_ctx)) != -1)
-    {
-        if (rc <= 0)
-        {
-            switch (rc)
-            {
-                case POPT_ERROR_NOARG:
-                case POPT_ERROR_BADOPT:
-                case POPT_ERROR_BADNUMBER:
-                case POPT_ERROR_OVERFLOW:
-                    std::cerr << poptStrerror(rc)
-                              << " "
-                              << poptBadOption(m_ctx, 0)
-                              << std::endl;
-                    return false;
-                case POPT_ERROR_OPTSTOODEEP:
-                case POPT_ERROR_BADQUOTE:
-                case POPT_ERROR_ERRNO:
-                default:
-                    std::cerr << "logic error in argument parsing"
-                              << std::endl;
-                    return false;
-            }
-
-            continue;
-        }
-        else
-        {
-            handle(rc - 1);
-        }
-    }
-
-    m_args = poptGetArgs(m_ctx);
-
-    while (m_args && m_args[m_args_sz])
-    {
-        ++m_args_sz;
-    }
-
-    return true;
+	assert(argc > 0);
+	std::string pretty = po6::path::basename(argv[0]);
+	argv[0] = pretty.c_str();
+	if (strncmp(argv[0], "lt-", 3) == 0)
+	{
+		argv[0] += 3;
+	}
+	assert(m_ctx == NULL);
+	int rc;
+	layout(1);
+	m_ctx = poptGetContext(NULL, argc, argv, &m_popts.front(),
+	                       POPT_CONTEXT_POSIXMEHARDER);
+	if (m_optstr)
+	{
+		poptSetOtherOptionHelp(m_ctx, m_optstr);
+	}
+	while ((rc = poptGetNextOpt(m_ctx)) != -1)
+	{
+		if (rc <= 0)
+		{
+			switch (rc)
+			{
+			case POPT_ERROR_NOARG:
+			case POPT_ERROR_BADOPT:
+			case POPT_ERROR_BADNUMBER:
+			case POPT_ERROR_OVERFLOW:
+				std::cerr << poptStrerror(rc)
+				          << " "
+				          << poptBadOption(m_ctx, 0)
+				          << std::endl;
+				return false;
+			case POPT_ERROR_OPTSTOODEEP:
+			case POPT_ERROR_BADQUOTE:
+			case POPT_ERROR_ERRNO:
+			default:
+				std::cerr << "logic error in argument parsing"
+				          << std::endl;
+				return false;
+			}
+			continue;
+		}
+		else
+		{
+			handle(rc - 1);
+		}
+	}
+	m_args = poptGetArgs(m_ctx);
+	while (m_args && m_args[m_args_sz])
+	{
+		++m_args_sz;
+	}
+	return true;
 }
 
-inline const char**
+inline const char **
 argparser :: args()
 {
-    return m_args;
+	return m_args;
 }
 
 inline size_t
 argparser :: args_sz()
 {
-    return m_args_sz;
+	return m_args_sz;
 }
 
 inline void
-argparser :: option_string(const char* optstr)
+argparser :: option_string(const char *optstr)
 {
-    m_optstr = optstr;
+	m_optstr = optstr;
 }
 
 inline void
 argparser :: autohelp()
 {
-    m_autohelp = true;
+	m_autohelp = true;
 }
 
-inline argument&
+inline argument &
 argparser :: arg()
 {
-    m_arguments.push_back(argument());
-    return m_arguments.back();
+	m_arguments.push_back(argument());
+	return m_arguments.back();
 }
 
 inline void
-argparser :: add(const char* name, const argparser& ap)
+argparser :: add(const char *name, const argparser &ap)
 {
-    m_subparsers.push_back(std::make_pair(name, ap));
+	m_subparsers.push_back(std::make_pair(name, ap));
 }
 
 inline
-argparser&
-argparser :: operator = (const argparser& rhs)
+argparser &
+argparser :: operator = (const argparser &rhs)
 {
-    if (this != &rhs)
-    {
-        m_autohelp = rhs.m_autohelp;
-        m_optstr = rhs.m_optstr;
-        m_ctx = rhs.m_ctx;
-        m_args = rhs.m_args;
-        m_args_sz = rhs.m_args_sz;
-        m_popts = rhs.m_popts;
-        m_arguments = rhs.m_arguments;
-        m_subparsers = rhs.m_subparsers;
-    }
-
-    return *this;
+	if (this != &rhs)
+	{
+		m_autohelp = rhs.m_autohelp;
+		m_optstr = rhs.m_optstr;
+		m_ctx = rhs.m_ctx;
+		m_args = rhs.m_args;
+		m_args_sz = rhs.m_args_sz;
+		m_popts = rhs.m_popts;
+		m_arguments = rhs.m_arguments;
+		m_subparsers = rhs.m_subparsers;
+	}
+	return *this;
 }
 
 inline size_t
 argparser :: size()
 {
-    size_t sz = m_arguments.size();
-
-    for (size_t i = 0; i < m_subparsers.size(); ++i)
-    {
-        sz += m_subparsers[i].second.size();
-    }
-
-    return sz;
+	size_t sz = m_arguments.size();
+	for (size_t i = 0; i < m_subparsers.size(); ++i)
+	{
+		sz += m_subparsers[i].second.size();
+	}
+	return sz;
 }
 
 inline size_t
 argparser :: layout(size_t idx)
 {
-    m_popts.clear();
-    struct poptOption ae[] = {POPT_AUTOHELP POPT_TABLEEND};
-
-    if (m_autohelp)
-    {
-        m_popts.push_back(ae[0]);
-    }
-
-    for (size_t i = 0; i < m_arguments.size(); ++i)
-    {
-        m_popts.push_back(m_arguments[i].option());
-        m_popts.back().val = idx;
-        ++idx;
-    }
-
-    for (size_t i = 0; i < m_subparsers.size(); ++i)
-    {
-        idx = m_subparsers[i].second.layout(idx);
-        poptOption po = {NULL, 0, POPT_ARG_INCLUDE_TABLE,
-                         &m_subparsers[i].second.m_popts.front(), 0,
-                         m_subparsers[i].first.c_str(), NULL};
-        m_popts.push_back(po);
-    }
-
-    m_popts.push_back(ae[1]);
-    return idx;
+	m_popts.clear();
+	struct poptOption ae[] = {POPT_AUTOHELP POPT_TABLEEND};
+	if (m_autohelp)
+	{
+		m_popts.push_back(ae[0]);
+	}
+	for (size_t i = 0; i < m_arguments.size(); ++i)
+	{
+		m_popts.push_back(m_arguments[i].option());
+		m_popts.back().val = idx;
+		++idx;
+	}
+	for (size_t i = 0; i < m_subparsers.size(); ++i)
+	{
+		idx = m_subparsers[i].second.layout(idx);
+		poptOption po = {NULL, 0, POPT_ARG_INCLUDE_TABLE,
+		                 &m_subparsers[i].second.m_popts.front(), 0,
+		                 m_subparsers[i].first.c_str(), NULL
+		                };
+		m_popts.push_back(po);
+	}
+	m_popts.push_back(ae[1]);
+	return idx;
 }
 
 inline void
 argparser :: handle(size_t idx)
 {
-    if (idx < m_arguments.size())
-    {
-        if (m_arguments[idx].m_true)
-        {
-            *m_arguments[idx].m_true = true;
-        }
-
-        if (m_arguments[idx].m_false)
-        {
-            *m_arguments[idx].m_false = false;
-        }
-    }
-
-    idx -= m_arguments.size();
-
-    for (size_t i = 0; i < m_subparsers.size(); ++i)
-    {
-        size_t sz = m_subparsers[i].second.size();
-
-        if (idx < sz)
-        {
-            m_subparsers[i].second.handle(idx);
-            return;
-        }
-
-        idx -= sz;
-    }
+	if (idx < m_arguments.size())
+	{
+		if (m_arguments[idx].m_true)
+		{
+			*m_arguments[idx].m_true = true;
+		}
+		if (m_arguments[idx].m_false)
+		{
+			*m_arguments[idx].m_false = false;
+		}
+	}
+	idx -= m_arguments.size();
+	for (size_t i = 0; i < m_subparsers.size(); ++i)
+	{
+		size_t sz = m_subparsers[i].second.size();
+		if (idx < sz)
+		{
+			m_subparsers[i].second.handle(idx);
+			return;
+		}
+		idx -= sz;
+	}
 }
 
 inline
 argument :: argument()
-    : m_opt()
-    , m_shortn(0)
-    , m_longn()
-    , m_desc()
-    , m_meta()
-    , m_true(NULL)
-    , m_false(NULL)
+	: m_opt()
+	, m_shortn(0)
+	, m_longn()
+	, m_desc()
+	, m_meta()
+	, m_true(NULL)
+	, m_false(NULL)
 {
-    m_opt.longName = NULL;
-    m_opt.shortName = '\0';
-    m_opt.argInfo = POPT_ARG_NONE;
-    m_opt.arg = NULL;
-    m_opt.val = 0;
-    m_opt.descrip = NULL;
-    m_opt.argDescrip = NULL;
+	m_opt.longName = NULL;
+	m_opt.shortName = '\0';
+	m_opt.argInfo = POPT_ARG_NONE;
+	m_opt.arg = NULL;
+	m_opt.val = 0;
+	m_opt.descrip = NULL;
+	m_opt.argDescrip = NULL;
 }
 
 inline
-argument :: argument(const argument& other)
-    : m_opt(other.m_opt)
-    , m_shortn(other.m_shortn)
-    , m_longn(other.m_longn)
-    , m_desc(other.m_desc)
-    , m_meta(other.m_meta)
-    , m_true(other.m_true)
-    , m_false(other.m_false)
+argument :: argument(const argument &other)
+	: m_opt(other.m_opt)
+	, m_shortn(other.m_shortn)
+	, m_longn(other.m_longn)
+	, m_desc(other.m_desc)
+	, m_meta(other.m_meta)
+	, m_true(other.m_true)
+	, m_false(other.m_false)
 {
-    reset_opt();
+	reset_opt();
 }
 
 inline
@@ -414,114 +395,113 @@ argument :: ~argument() throw ()
 {
 }
 
-inline argument&
-argument :: name(char sn, const char* ln)
+inline argument &
+argument :: name(char sn, const char *ln)
 {
-    return short_name(sn).long_name(ln);
+	return short_name(sn).long_name(ln);
 }
 
-inline argument&
-argument :: long_name(const char* n)
+inline argument &
+argument :: long_name(const char *n)
 {
-    m_longn = n;
-    m_opt.longName = m_longn.c_str();
-    return *this;
+	m_longn = n;
+	m_opt.longName = m_longn.c_str();
+	return *this;
 }
 
-inline argument&
+inline argument &
 argument :: short_name(char n)
 {
-    m_shortn = n;
-    m_opt.shortName = n;
-    return *this;
+	m_shortn = n;
+	m_opt.shortName = n;
+	return *this;
 }
 
-inline argument&
-argument :: description(const char* desc)
+inline argument &
+argument :: description(const char *desc)
 {
-    m_desc = desc;
-    m_opt.descrip = m_desc.c_str();
-    return *this;
+	m_desc = desc;
+	m_opt.descrip = m_desc.c_str();
+	return *this;
 }
 
-inline argument&
-argument :: metavar(const char* meta)
+inline argument &
+argument :: metavar(const char *meta)
 {
-    m_meta = meta;
-    m_opt.argDescrip = m_meta.c_str();
-    return *this;
+	m_meta = meta;
+	m_opt.argDescrip = m_meta.c_str();
+	return *this;
 }
 
-inline argument&
-argument :: as_string(const char** v)
+inline argument &
+argument :: as_string(const char **v)
 {
-    m_opt.argInfo = POPT_ARG_STRING;
-    m_opt.arg = v;
-    return *this;
+	m_opt.argInfo = POPT_ARG_STRING;
+	m_opt.arg = v;
+	return *this;
 }
 
-inline argument&
-argument :: as_long(long* v)
+inline argument &
+argument :: as_long(long *v)
 {
-    m_opt.argInfo = POPT_ARG_LONG;
-    m_opt.arg = v;
-    return *this;
+	m_opt.argInfo = POPT_ARG_LONG;
+	m_opt.arg = v;
+	return *this;
 }
 
-inline argument&
-argument :: as_double(double* v)
+inline argument &
+argument :: as_double(double *v)
 {
-    m_opt.argInfo = POPT_ARG_DOUBLE;
-    m_opt.arg = v;
-    return *this;
+	m_opt.argInfo = POPT_ARG_DOUBLE;
+	m_opt.arg = v;
+	return *this;
 }
 
-inline argument&
-argument :: set_true(bool* b)
+inline argument &
+argument :: set_true(bool *b)
 {
-    m_true = b;
-    return *this;
+	m_true = b;
+	return *this;
 }
 
-inline argument&
-argument :: set_false(bool* b)
+inline argument &
+argument :: set_false(bool *b)
 {
-    m_false = b;
-    return *this;
+	m_false = b;
+	return *this;
 }
 
-inline argument&
+inline argument &
 argument :: hidden()
 {
-    m_opt.argInfo |= POPT_ARGFLAG_DOC_HIDDEN;
-    return *this;
+	m_opt.argInfo |= POPT_ARGFLAG_DOC_HIDDEN;
+	return *this;
 }
 
-inline argument&
-argument :: operator = (const argument& rhs)
+inline argument &
+argument :: operator = (const argument &rhs)
 {
-    if (this != &rhs)
-    {
-        m_opt = rhs.m_opt;
-        m_shortn = rhs.m_shortn;
-        m_longn = rhs.m_longn;
-        m_desc = rhs.m_desc;
-        m_meta = rhs.m_meta;
-        m_true = rhs.m_true;
-        m_false = rhs.m_false;
-        reset_opt();
-    }
-
-    return *this;
+	if (this != &rhs)
+	{
+		m_opt = rhs.m_opt;
+		m_shortn = rhs.m_shortn;
+		m_longn = rhs.m_longn;
+		m_desc = rhs.m_desc;
+		m_meta = rhs.m_meta;
+		m_true = rhs.m_true;
+		m_false = rhs.m_false;
+		reset_opt();
+	}
+	return *this;
 }
 
 inline void
 argument :: reset_opt()
 {
-    m_opt.longName = m_longn.c_str();
-    m_opt.shortName = m_shortn;
-    m_opt.descrip = m_desc.c_str();
-    m_opt.argDescrip = m_meta.c_str();
+	m_opt.longName = m_longn.c_str();
+	m_opt.shortName = m_shortn;
+	m_opt.descrip = m_desc.c_str();
+	m_opt.argDescrip = m_meta.c_str();
 }
 
 } // namespace e

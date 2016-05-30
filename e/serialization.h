@@ -46,8 +46,8 @@
 #include <e/varint.h>
 
 #define E_SERIALIZATION_TRIPLET(X) \
-    e::packer operator << (e::packer pa, const X& x); \
-    e::unpacker operator >> (e::unpacker up, X& x)
+	e::packer operator << (e::packer pa, const X& x); \
+	e::unpacker operator >> (e::unpacker up, X& x)
 
 namespace e
 {
@@ -67,72 +67,72 @@ inline uint64_t pack_size(double) { return 8; }
 
 class packer
 {
-    public:
-        packer(std::string* str);
-        packer(std::string* str, size_t off);
-        packer(e::buffer* buf, size_t off);
-        packer(const packer& other);
-        ~packer() throw ();
+public:
+	packer(std::string *str);
+	packer(std::string *str, size_t off);
+	packer(e::buffer *buf, size_t off);
+	packer(const packer &other);
+	~packer() throw ();
 
-    public:
-        void append(const uint8_t* ptr, size_t ptr_sz, packer* pa);
+public:
+	void append(const uint8_t *ptr, size_t ptr_sz, packer *pa);
 
-    public:
-        template <typename T> packer operator << (const std::vector<T>& rhs);
-        template <typename T> packer operator << (const std::list<T>& rhs);
-        template <typename A, typename B> packer operator << (const std::pair<A, B>& rhs);
-        struct bytes_manager
-        {
-            bytes_manager();
-            virtual ~bytes_manager() throw ();
+public:
+	template <typename T> packer operator << (const std::vector<T> &rhs);
+	template <typename T> packer operator << (const std::list<T> &rhs);
+	template <typename A, typename B> packer operator << (const std::pair<A, B> &rhs);
+	struct bytes_manager
+	{
+		bytes_manager();
+		virtual ~bytes_manager() throw ();
 
-            virtual void write(size_t off, const uint8_t* ptr, size_t ptr_sz) = 0;
+		virtual void write(size_t off, const uint8_t *ptr, size_t ptr_sz) = 0;
 
-            private:
-                bytes_manager(const bytes_manager&);
-                bytes_manager& operator = (const bytes_manager&);
-        };
+	private:
+		bytes_manager(const bytes_manager &);
+		bytes_manager &operator = (const bytes_manager &);
+	};
 
-    private:
-        packer(e::compat::shared_ptr<bytes_manager> mgr, size_t off);
+private:
+	packer(e::compat::shared_ptr<bytes_manager> mgr, size_t off);
 
-    private:
-        e::compat::shared_ptr<bytes_manager> m_mgr;
-        size_t m_off;
+private:
+	e::compat::shared_ptr<bytes_manager> m_mgr;
+	size_t m_off;
 };
 
 class unpacker
 {
-    public:
-        static unpacker error_out();
+public:
+	static unpacker error_out();
 
-    public:
-        unpacker();
-        unpacker(const uint8_t* data, size_t sz);
-        unpacker(const char* data, size_t sz);
-        unpacker(const std::string& s);
-        unpacker(const e::slice& s);
-        unpacker(const unpacker& other);
-        ~unpacker() throw ();
+public:
+	unpacker();
+	unpacker(const uint8_t *data, size_t sz);
+	unpacker(const char *data, size_t sz);
+	unpacker(const std::string &s);
+	unpacker(const e::slice &s);
+	unpacker(const unpacker &other);
+	~unpacker() throw ();
 
-    public:
-        bool error() const { return m_error; }
-        size_t remain() const { return m_end - m_ptr; }
-        e::slice remainder() const { return e::slice(m_ptr, m_end - m_ptr); }
-        const uint8_t* start() const { return m_ptr; }
-        const uint8_t* limit() const { return m_end; }
-        unpacker advance(size_t sz) const;
+public:
+	bool error() const { return m_error; }
+	size_t remain() const { return m_end - m_ptr; }
+	e::slice remainder() const { return e::slice(m_ptr, m_end - m_ptr); }
+	const uint8_t *start() const { return m_ptr; }
+	const uint8_t *limit() const { return m_end; }
+	unpacker advance(size_t sz) const;
 
-    public:
-        unpacker& operator = (const unpacker& rhs);
-        template <typename T> unpacker operator >> (std::vector<T>& rhs);
-        template <typename T> unpacker operator >> (std::list<T>& rhs);
-        template <typename A, typename B> unpacker operator >> (std::pair<A, B>& rhs);
+public:
+	unpacker &operator = (const unpacker &rhs);
+	template <typename T> unpacker operator >> (std::vector<T> &rhs);
+	template <typename T> unpacker operator >> (std::list<T> &rhs);
+	template <typename A, typename B> unpacker operator >> (std::pair<A, B> &rhs);
 
-    private:
-        const uint8_t* m_ptr;
-        const uint8_t* m_end;
-        bool m_error;
+private:
+	const uint8_t *m_ptr;
+	const uint8_t *m_end;
+	bool m_error;
 };
 
 E_SERIALIZATION_TRIPLET(int8_t);
@@ -145,147 +145,143 @@ E_SERIALIZATION_TRIPLET(uint32_t);
 E_SERIALIZATION_TRIPLET(uint64_t);
 E_SERIALIZATION_TRIPLET(double);
 
-size_t pack_size(const e::slice& s);
+size_t pack_size(const e::slice &s);
 E_SERIALIZATION_TRIPLET(e::slice);
 
-size_t pack_size(const po6::net::ipaddr& i);
+size_t pack_size(const po6::net::ipaddr &i);
 E_SERIALIZATION_TRIPLET(po6::net::ipaddr);
-size_t pack_size(const po6::net::location& l);
+size_t pack_size(const po6::net::location &l);
 E_SERIALIZATION_TRIPLET(po6::net::location);
-size_t pack_size(const po6::net::hostname& h);
+size_t pack_size(const po6::net::hostname &h);
 E_SERIALIZATION_TRIPLET(po6::net::hostname);
 
 class pack_memmove
 {
-    public:
-        pack_memmove(const void* data, size_t size);
-        pack_memmove(const pack_memmove& other);
-        ~pack_memmove() throw ();
+public:
+	pack_memmove(const void *data, size_t size);
+	pack_memmove(const pack_memmove &other);
+	~pack_memmove() throw ();
 
-    public:
-        const uint8_t* data() const { return m_data; }
-        size_t size() const { return m_size; }
+public:
+	const uint8_t *data() const { return m_data; }
+	size_t size() const { return m_size; }
 
-    public:
-        pack_memmove& operator = (const pack_memmove& rhs);
+public:
+	pack_memmove &operator = (const pack_memmove &rhs);
 
-    private:
-        const uint8_t* m_data;
-        size_t m_size;
+private:
+	const uint8_t *m_data;
+	size_t m_size;
 };
 
 e::packer
-operator << (e::packer pa, const pack_memmove& x);
+operator << (e::packer pa, const pack_memmove &x);
 
 class unpack_memmove
 {
-    public:
-        unpack_memmove(void* data, size_t size);
-        unpack_memmove(const unpack_memmove& other);
-        ~unpack_memmove() throw ();
+public:
+	unpack_memmove(void *data, size_t size);
+	unpack_memmove(const unpack_memmove &other);
+	~unpack_memmove() throw ();
 
-    public:
-        uint8_t* data() const { return m_data; }
-        size_t size() const { return m_size; }
+public:
+	uint8_t *data() const { return m_data; }
+	size_t size() const { return m_size; }
 
-    public:
-        unpack_memmove& operator = (const unpack_memmove& rhs);
+public:
+	unpack_memmove &operator = (const unpack_memmove &rhs);
 
-    private:
-        uint8_t* m_data;
-        size_t m_size;
+private:
+	uint8_t *m_data;
+	size_t m_size;
 };
 
 e::unpacker
-operator >> (e::unpacker up, const unpack_memmove& x);
+operator >> (e::unpacker up, const unpack_memmove &x);
 
 class pack_varint
 {
-    public:
-        pack_varint(uint64_t _x) : x(_x) {}
-        ~pack_varint() throw () {}
+public:
+	pack_varint(uint64_t _x) : x(_x) {}
+	~pack_varint() throw () {}
 
-    public:
-        uint64_t x;
+public:
+	uint64_t x;
 };
 
 e::packer
-operator << (e::packer pa, const pack_varint& x);
+operator << (e::packer pa, const pack_varint &x);
 
 class unpack_varint
 {
-    public:
-        unpack_varint(uint64_t& _x) : x(_x) {}
-        ~unpack_varint() throw () {}
+public:
+	unpack_varint(uint64_t &_x) : x(_x) {}
+	~unpack_varint() throw () {}
 
-    public:
-        uint64_t& x;
+public:
+	uint64_t &x;
 };
 
 e::unpacker
-operator >> (e::unpacker up, const unpack_varint& x);
+operator >> (e::unpacker up, const unpack_varint &x);
 
 /////////////////////////////////////////////////////////
 template <typename T>
 class pack_array
 {
-    public:
-        pack_array(const T* _t, size_t _sz) : t(_t), sz(_sz) {}
-        ~pack_array() throw () {}
+public:
+	pack_array(const T *_t, size_t _sz) : t(_t), sz(_sz) {}
+	~pack_array() throw () {}
 
-    public:
-        const T* t;
-        size_t sz;
+public:
+	const T *t;
+	size_t sz;
 };
 
 template <typename T>
 e::packer
-operator << (e::packer pa, const pack_array<T>& x)
+operator << (e::packer pa, const pack_array<T> &x)
 {
-    for (size_t i = 0; i < x.sz; ++i)
-    {
-        pa = pa << x.t[i];
-    }
-
-    return pa;
+	for (size_t i = 0; i < x.sz; ++i)
+	{
+		pa = pa << x.t[i];
+	}
+	return pa;
 }
 
 template <typename T>
 class unpack_array
 {
-    public:
-        unpack_array(T* _t, size_t _sz) : t(_t), sz(_sz) {}
-        ~unpack_array() throw () {}
+public:
+	unpack_array(T *_t, size_t _sz) : t(_t), sz(_sz) {}
+	~unpack_array() throw () {}
 
-    public:
-        T* t;
-        size_t sz;
+public:
+	T *t;
+	size_t sz;
 };
 
 template <typename T>
 e::unpacker
-operator >> (e::unpacker up, const unpack_array<T>& x)
+operator >> (e::unpacker up, const unpack_array<T> &x)
 {
-    for (size_t i = 0; i < x.sz; ++i)
-    {
-        up = up >> x.t[i];
-    }
-
-    return up;
+	for (size_t i = 0; i < x.sz; ++i)
+	{
+		up = up >> x.t[i];
+	}
+	return up;
 }
 
 template <typename T>
 size_t
-pack_size_array(const T* t, size_t sz)
+pack_size_array(const T *t, size_t sz)
 {
-    size_t total = 0;
-
-    for (size_t i = 0; i < sz; ++i)
-    {
-        total += pack_size(t[i]);
-    }
-
-    return total;
+	size_t total = 0;
+	for (size_t i = 0; i < sz; ++i)
+	{
+		total += pack_size(t[i]);
+	}
+	return total;
 }
 
 /////////////////////////////////////////////////////////
@@ -293,81 +289,81 @@ pack_size_array(const T* t, size_t sz)
 template <typename T>
 class pack_uint8
 {
-    public:
-        pack_uint8(const T& _t) : t(_t) {}
-        ~pack_uint8() throw () {}
+public:
+	pack_uint8(const T &_t) : t(_t) {}
+	~pack_uint8() throw () {}
 
-    public:
-        const T& t;
+public:
+	const T &t;
 };
 
 template <typename T>
 e::packer
-operator << (e::packer pa, const pack_uint8<T>& x)
+operator << (e::packer pa, const pack_uint8<T> &x)
 {
-    uint8_t mt = static_cast<uint8_t>(x.t);
-    return pa << mt;
+	uint8_t mt = static_cast<uint8_t>(x.t);
+	return pa << mt;
 }
 
 template <typename T>
 class unpack_uint8
 {
-    public:
-        unpack_uint8(T& _t) : t(_t) {}
-        ~unpack_uint8() throw () {}
+public:
+	unpack_uint8(T &_t) : t(_t) {}
+	~unpack_uint8() throw () {}
 
-    public:
-        T& t;
+public:
+	T &t;
 };
 
 template <typename T>
 e::unpacker
-operator >> (e::unpacker up, const unpack_uint8<T>& x)
+operator >> (e::unpacker up, const unpack_uint8<T> &x)
 {
-    uint8_t mt;
-    up = up >> mt;
-    x.t = static_cast<T>(mt);
-    return up;
+	uint8_t mt;
+	up = up >> mt;
+	x.t = static_cast<T>(mt);
+	return up;
 }
 
 template <typename T>
 class pack_uint16
 {
-    public:
-        pack_uint16(const T& _t) : t(_t) {}
-        ~pack_uint16() throw () {}
+public:
+	pack_uint16(const T &_t) : t(_t) {}
+	~pack_uint16() throw () {}
 
-    public:
-        const T& t;
+public:
+	const T &t;
 };
 
 template <typename T>
 e::packer
-operator << (e::packer pa, const pack_uint16<T>& x)
+operator << (e::packer pa, const pack_uint16<T> &x)
 {
-    uint16_t mt = static_cast<uint16_t>(x.t);
-    return pa << mt;
+	uint16_t mt = static_cast<uint16_t>(x.t);
+	return pa << mt;
 }
 
 template <typename T>
 class unpack_uint16
 {
-    public:
-        unpack_uint16(T& _t) : t(_t) {}
-        ~unpack_uint16() throw () {}
+public:
+	unpack_uint16(T &_t) : t(_t) {}
+	~unpack_uint16() throw () {}
 
-    public:
-        T& t;
+public:
+	T &t;
 };
 
 template <typename T>
 e::unpacker
-operator >> (e::unpacker up, const unpack_uint16<T>& x)
+operator >> (e::unpacker up, const unpack_uint16<T> &x)
 {
-    uint16_t mt;
-    up = up >> mt;
-    x.t = static_cast<T>(mt);
-    return up;
+	uint16_t mt;
+	up = up >> mt;
+	x.t = static_cast<T>(mt);
+	return up;
 }
 
 } // namespace e
@@ -375,121 +371,109 @@ operator >> (e::unpacker up, const unpack_uint16<T>& x)
 // vector<T>
 template <typename T>
 size_t
-pack_size(const typename std::vector<T>& v)
+pack_size(const typename std::vector<T> &v)
 {
-    size_t sz = e::varint_length(v.size());
-
-    for (size_t i = 0; i < v.size(); ++i)
-    {
-        sz += pack_size(v[i]);
-    }
-
-    return sz;
+	size_t sz = e::varint_length(v.size());
+	for (size_t i = 0; i < v.size(); ++i)
+	{
+		sz += pack_size(v[i]);
+	}
+	return sz;
 }
 
 template <typename T>
 e::packer
-e :: packer :: operator << (const std::vector<T>& rhs)
+e :: packer :: operator << (const std::vector<T> &rhs)
 {
-    e::packer pa(*this);
-    const uint64_t sz = rhs.size();
-    pa = pa << pack_varint(sz);
-
-    for (uint64_t i = 0; i < sz; ++i)
-    {
-        pa = pa << rhs[i];
-    }
-
-    return pa;
+	e::packer pa(*this);
+	const uint64_t sz = rhs.size();
+	pa = pa << pack_varint(sz);
+	for (uint64_t i = 0; i < sz; ++i)
+	{
+		pa = pa << rhs[i];
+	}
+	return pa;
 }
 
 template <typename T>
 e::unpacker
-e :: unpacker :: operator >> (std::vector<T>& rhs)
+e :: unpacker :: operator >> (std::vector<T> &rhs)
 {
-    e::unpacker up(*this);
-    uint64_t sz = 0;
-    up = up >> unpack_varint(sz);
-    rhs.clear();
-
-    for (uint64_t i = 0; i < sz; ++i)
-    {
-        rhs.push_back(T());
-        up = up >> rhs.back();
-    }
-
-    return up;
+	e::unpacker up(*this);
+	uint64_t sz = 0;
+	up = up >> unpack_varint(sz);
+	rhs.clear();
+	for (uint64_t i = 0; i < sz; ++i)
+	{
+		rhs.push_back(T());
+		up = up >> rhs.back();
+	}
+	return up;
 }
 
 // list<T>
 template <typename T>
 size_t
-pack_size(const typename std::list<T>& L)
+pack_size(const typename std::list<T> &L)
 {
-    size_t sz = e::varint_length(L.size());
-
-    for (typename std::list<T>::const_iterator it = L.begin(); it != L.end(); ++it)
-    {
-        sz += pack_size(*it);
-    }
-
-    return sz;
+	size_t sz = e::varint_length(L.size());
+	for (typename std::list<T>::const_iterator it = L.begin(); it != L.end(); ++it)
+	{
+		sz += pack_size(*it);
+	}
+	return sz;
 }
 
 template <typename T>
 e::packer
-e :: packer :: operator << (const std::list<T>& rhs)
+e :: packer :: operator << (const std::list<T> &rhs)
 {
-    e::packer pa(*this);
-    const uint64_t sz = rhs.size();
-    pa = pa << pack_varint(sz);
-
-    for (typename std::list<T>::const_iterator it = rhs.begin(); it != rhs.end(); ++it)
-    {
-        pa = pa << *it;
-    }
-
-    return pa;
+	e::packer pa(*this);
+	const uint64_t sz = rhs.size();
+	pa = pa << pack_varint(sz);
+	for (typename std::list<T>::const_iterator it = rhs.begin(); it != rhs.end(); ++it)
+	{
+		pa = pa << *it;
+	}
+	return pa;
 }
 
 template <typename T>
 e::unpacker
-e :: unpacker :: operator >> (std::list<T>& rhs)
+e :: unpacker :: operator >> (std::list<T> &rhs)
 {
-    e::unpacker up(*this);
-    uint64_t sz = 0;
-    up = up >> unpack_varint(sz);
-    rhs.clear();
-
-    for (uint64_t i = 0; i < sz; ++i)
-    {
-        rhs.push_back(T());
-        up = up >> rhs.back();
-    }
-
-    return up;
+	e::unpacker up(*this);
+	uint64_t sz = 0;
+	up = up >> unpack_varint(sz);
+	rhs.clear();
+	for (uint64_t i = 0; i < sz; ++i)
+	{
+		rhs.push_back(T());
+		up = up >> rhs.back();
+	}
+	return up;
 }
 
 // pair<A, B>
 template <typename A, typename B>
 size_t
-pack_size(const std::pair<A, B>& p)
+pack_size(const std::pair<A, B> &p)
 {
-    return pack_size(p.first) + pack_size(p.second);
+	return pack_size(p.first) + pack_size(p.second);
 }
 
 template <typename A, typename B>
 e::packer
-e :: packer :: operator << (const std::pair<A, B>& p)
+e :: packer :: operator << (const std::pair<A, B> &p)
 {
-    return *this << p.first << p.second;
+	return *this << p.first << p.second;
 }
 
 template <typename A, typename B>
 e::unpacker
-e :: unpacker :: operator >> (std::pair<A, B>& p)
+e :: unpacker :: operator >> (std::pair<A, B> &p)
 {
-    return *this >> p.first >> p.second;
+	return *this >> p.first >> p.second;
 }
 
 #undef E_SERIALIZATION_TRIPLET

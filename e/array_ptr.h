@@ -40,132 +40,128 @@ namespace e
 template <typename T>
 class array_ptr
 {
-    public:
-        array_ptr() throw ()
-            : m_ptr(0)
-        {
-        }
+public:
+	array_ptr() throw ()
+		: m_ptr(0)
+	{
+	}
 
-        explicit
-        array_ptr(T* ptr) throw ()
-            : m_ptr(ptr)
-        {
-        }
+	explicit
+	array_ptr(T *ptr) throw ()
+		: m_ptr(ptr)
+	{
+	}
 
-        array_ptr(array_ptr<T>& other) throw ()
-            : m_ptr(other.m_ptr)
-        {
-            other.m_ptr = NULL;
-        }
+	array_ptr(array_ptr<T> &other) throw ()
+		: m_ptr(other.m_ptr)
+	{
+		other.m_ptr = NULL;
+	}
 
-        ~array_ptr() throw ()
-        {
-            if (m_ptr)
-            {
-                delete[] m_ptr;
-            }
-        }
+	~array_ptr() throw ()
+	{
+		if (m_ptr)
+		{
+			delete[] m_ptr;
+		}
+	}
 
-    public:
-        T*
-        get() const throw ()
-        {
-            return m_ptr;
-        }
+public:
+	T *
+	get() const throw ()
+	{
+		return m_ptr;
+	}
 
-    public:
-        array_ptr<T>&
-        operator = (array_ptr<T>& rhs) throw ()
-        {
-            if (m_ptr)
-            {
-                delete[] m_ptr;
-                m_ptr = NULL;
-            }
+public:
+	array_ptr<T> &
+	operator = (array_ptr<T> &rhs) throw ()
+	{
+		if (m_ptr)
+		{
+			delete[] m_ptr;
+			m_ptr = NULL;
+		}
+		m_ptr = rhs.m_ptr;
+		if (this != &rhs)
+		{
+			rhs.m_ptr = NULL;
+		}
+		return *this;
+	}
 
-            m_ptr = rhs.m_ptr;
+	array_ptr<T> &
+	operator = (T *rhs)
+	{
+		if (m_ptr)
+		{
+			delete[] m_ptr;
+			m_ptr = NULL;
+		}
+		m_ptr = rhs;
+		return *this;
+	}
 
-            if (this != &rhs)
-            {
-                rhs.m_ptr = NULL;
-            }
+	T &
+	operator [] (size_t idx)
+	{
+		return m_ptr[idx];
+	}
 
-            return *this;
-        }
+	const T &
+	operator [] (size_t idx) const
+	{
+		return m_ptr[idx];
+	}
 
-        array_ptr<T>&
-        operator = (T* rhs)
-        {
-            if (m_ptr)
-            {
-                delete[] m_ptr;
-                m_ptr = NULL;
-            }
+	// Trick from the tr1 shared_ptr impl.
+private:
+	typedef T *array_ptr<T>::*bool_type;
 
-            m_ptr = rhs;
-            return *this;
-        }
+public:
+	operator bool_type () const
+	{
+		return m_ptr == 0 ? 0 : &array_ptr<T>::m_ptr;
+	}
 
-        T&
-        operator [] (size_t idx)
-        {
-            return m_ptr[idx];
-        }
+	bool
+	operator < (const array_ptr<T> &rhs) const
+	{
+		return m_ptr < rhs.m_ptr;
+	}
 
-        const T&
-        operator [] (size_t idx) const
-        {
-            return m_ptr[idx];
-        }
+	bool
+	operator <= (const array_ptr<T> &rhs) const
+	{
+		return m_ptr <= rhs.m_ptr;
+	}
 
-    // Trick from the tr1 shared_ptr impl.
-    private:
-        typedef T* array_ptr<T>::*bool_type;
+	bool
+	operator == (const array_ptr<T> &rhs) const
+	{
+		return m_ptr == rhs.m_ptr;
+	}
 
-    public:
-        operator bool_type () const
-        {
-            return m_ptr == 0 ? 0 : &array_ptr<T>::m_ptr;
-        }
+	bool
+	operator != (const array_ptr<T> &rhs) const
+	{
+		return m_ptr != rhs.m_ptr;
+	}
 
-        bool
-        operator < (const array_ptr<T>& rhs) const
-        {
-            return m_ptr < rhs.m_ptr;
-        }
+	bool
+	operator >= (const array_ptr<T> &rhs) const
+	{
+		return m_ptr >= rhs.m_ptr;
+	}
 
-        bool
-        operator <= (const array_ptr<T>& rhs) const
-        {
-            return m_ptr <= rhs.m_ptr;
-        }
+	bool
+	operator > (const array_ptr<T> &rhs) const
+	{
+		return m_ptr > rhs.m_ptr;
+	}
 
-        bool
-        operator == (const array_ptr<T>& rhs) const
-        {
-            return m_ptr == rhs.m_ptr;
-        }
-
-        bool
-        operator != (const array_ptr<T>& rhs) const
-        {
-            return m_ptr != rhs.m_ptr;
-        }
-
-        bool
-        operator >= (const array_ptr<T>& rhs) const
-        {
-            return m_ptr >= rhs.m_ptr;
-        }
-
-        bool
-        operator > (const array_ptr<T>& rhs) const
-        {
-            return m_ptr > rhs.m_ptr;
-        }
-
-    private:
-        T* m_ptr;
+private:
+	T *m_ptr;
 };
 
 } // namespace e

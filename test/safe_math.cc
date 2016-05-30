@@ -36,141 +36,114 @@ namespace
 
 TEST(SafeMath, Add)
 {
-    int64_t result;
-
-    ASSERT_TRUE(e::safe_add(0, 0, &result));
-    ASSERT_EQ(0, result);
-
-    ASSERT_TRUE(e::safe_add(0, INT64_MAX, &result));
-    ASSERT_EQ(INT64_MAX, result);
-    ASSERT_TRUE(e::safe_add(INT64_MAX, 0, &result));
-    ASSERT_EQ(INT64_MAX, result);
-
-    ASSERT_FALSE(e::safe_add(1, INT64_MAX, &result));
-    ASSERT_FALSE(e::safe_add(INT64_MAX, 1, &result));
-
-    ASSERT_TRUE(e::safe_add(0, INT64_MIN, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_add(INT64_MIN, 0, &result));
-    ASSERT_EQ(INT64_MIN, result);
-
-    ASSERT_FALSE(e::safe_add(-1, INT64_MIN, &result));
-    ASSERT_FALSE(e::safe_add(INT64_MIN, -1, &result));
-
-    ASSERT_TRUE(e::safe_add(INT64_MIN, INT64_MAX, &result));
-    ASSERT_EQ(-1, result);
-    ASSERT_TRUE(e::safe_add(INT64_MAX, INT64_MIN, &result));
-    ASSERT_EQ(-1, result);
+	int64_t result;
+	ASSERT_TRUE(e::safe_add(0, 0, &result));
+	ASSERT_EQ(0, result);
+	ASSERT_TRUE(e::safe_add(0, INT64_MAX, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_TRUE(e::safe_add(INT64_MAX, 0, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_FALSE(e::safe_add(1, INT64_MAX, &result));
+	ASSERT_FALSE(e::safe_add(INT64_MAX, 1, &result));
+	ASSERT_TRUE(e::safe_add(0, INT64_MIN, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_add(INT64_MIN, 0, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_FALSE(e::safe_add(-1, INT64_MIN, &result));
+	ASSERT_FALSE(e::safe_add(INT64_MIN, -1, &result));
+	ASSERT_TRUE(e::safe_add(INT64_MIN, INT64_MAX, &result));
+	ASSERT_EQ(-1, result);
+	ASSERT_TRUE(e::safe_add(INT64_MAX, INT64_MIN, &result));
+	ASSERT_EQ(-1, result);
 }
 
 TEST(SafeMath, Sub)
 {
-    int64_t result;
-
-    ASSERT_TRUE(e::safe_sub(0, 0, &result));
-    ASSERT_EQ(0, result);
-
-    ASSERT_TRUE(e::safe_sub(0, -INT64_MAX, &result));
-    ASSERT_EQ(INT64_MAX, result);
-    ASSERT_TRUE(e::safe_sub(INT64_MAX, 0, &result));
-    ASSERT_EQ(INT64_MAX, result);
-
-    ASSERT_FALSE(e::safe_sub(INT64_MAX, -1, &result));
-    ASSERT_FALSE(e::safe_sub(INT64_MIN, 1, &result));
-
-    ASSERT_TRUE(e::safe_sub(INT64_MIN, -INT64_MAX, &result));
-    ASSERT_EQ(-1, result);
-    ASSERT_TRUE(e::safe_sub(-INT64_MAX, INT64_MIN, &result));
-    ASSERT_EQ(1, result);
+	int64_t result;
+	ASSERT_TRUE(e::safe_sub(0, 0, &result));
+	ASSERT_EQ(0, result);
+	ASSERT_TRUE(e::safe_sub(0, -INT64_MAX, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_TRUE(e::safe_sub(INT64_MAX, 0, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_FALSE(e::safe_sub(INT64_MAX, -1, &result));
+	ASSERT_FALSE(e::safe_sub(INT64_MIN, 1, &result));
+	ASSERT_TRUE(e::safe_sub(INT64_MIN, -INT64_MAX, &result));
+	ASSERT_EQ(-1, result);
+	ASSERT_TRUE(e::safe_sub(-INT64_MAX, INT64_MIN, &result));
+	ASSERT_EQ(1, result);
 }
 
 TEST(SafeMath, Mul)
 {
-    int64_t result;
-
-    ASSERT_TRUE(e::safe_mul(0, 0, &result));
-    ASSERT_EQ(0, result);
-
-    ASSERT_TRUE(e::safe_mul(1, INT64_MAX, &result));
-    ASSERT_EQ(INT64_MAX, result);
-    ASSERT_TRUE(e::safe_mul(INT64_MAX, 1, &result));
-    ASSERT_EQ(INT64_MAX, result);
-    ASSERT_TRUE(e::safe_mul(1, INT64_MIN, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_mul(INT64_MIN, 1, &result));
-    ASSERT_EQ(INT64_MIN, result);
-
-    ASSERT_FALSE(e::safe_mul(4611686018427387904LL, 2, &result));
-    ASSERT_FALSE(e::safe_mul(2, 4611686018427387904LL, &result));
-
-    ASSERT_TRUE(e::safe_mul(-4611686018427387904LL, 2, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_mul(2, -4611686018427387904LL, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_mul(4611686018427387904LL, -2, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_mul(-2, 4611686018427387904LL, &result));
-    ASSERT_EQ(INT64_MIN, result);
-
-    ASSERT_FALSE(e::safe_mul(3074457345618258603, -3, &result));
-    ASSERT_FALSE(e::safe_mul(-3, 3074457345618258603, &result));
-    ASSERT_FALSE(e::safe_mul(-3074457345618258603, 3, &result));
-    ASSERT_FALSE(e::safe_mul(3, -3074457345618258603, &result));
+	int64_t result;
+	ASSERT_TRUE(e::safe_mul(0, 0, &result));
+	ASSERT_EQ(0, result);
+	ASSERT_TRUE(e::safe_mul(1, INT64_MAX, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_TRUE(e::safe_mul(INT64_MAX, 1, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_TRUE(e::safe_mul(1, INT64_MIN, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_mul(INT64_MIN, 1, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_FALSE(e::safe_mul(4611686018427387904LL, 2, &result));
+	ASSERT_FALSE(e::safe_mul(2, 4611686018427387904LL, &result));
+	ASSERT_TRUE(e::safe_mul(-4611686018427387904LL, 2, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_mul(2, -4611686018427387904LL, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_mul(4611686018427387904LL, -2, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_mul(-2, 4611686018427387904LL, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_FALSE(e::safe_mul(3074457345618258603, -3, &result));
+	ASSERT_FALSE(e::safe_mul(-3, 3074457345618258603, &result));
+	ASSERT_FALSE(e::safe_mul(-3074457345618258603, 3, &result));
+	ASSERT_FALSE(e::safe_mul(3, -3074457345618258603, &result));
 }
 
 TEST(SafeMath, Div)
 {
-    int64_t result;
-
-    ASSERT_FALSE(e::safe_div(INT64_MIN, -1, &result));
-    ASSERT_FALSE(e::safe_div(INT64_MIN, 0, &result));
-
-    ASSERT_TRUE(e::safe_div(INT64_MIN, 1, &result));
-    ASSERT_EQ(INT64_MIN, result);
-    ASSERT_TRUE(e::safe_div(INT64_MAX, 1, &result));
-    ASSERT_EQ(INT64_MAX, result);
-    ASSERT_TRUE(e::safe_div(INT64_MAX, -1, &result));
-    ASSERT_EQ(INT64_MIN + 1, result);
-
-    ASSERT_TRUE(e::safe_div(-5, 2, &result));
-    ASSERT_EQ(-3, result);
-
-    ASSERT_TRUE(e::safe_div(-5, 3, &result));
-    ASSERT_EQ(-2, result);
-
-    ASSERT_TRUE(e::safe_div(5, -2, &result));
-    ASSERT_EQ(-3, result);
-
-    ASSERT_TRUE(e::safe_div(5, -3, &result));
-    ASSERT_EQ(-2, result);
+	int64_t result;
+	ASSERT_FALSE(e::safe_div(INT64_MIN, -1, &result));
+	ASSERT_FALSE(e::safe_div(INT64_MIN, 0, &result));
+	ASSERT_TRUE(e::safe_div(INT64_MIN, 1, &result));
+	ASSERT_EQ(INT64_MIN, result);
+	ASSERT_TRUE(e::safe_div(INT64_MAX, 1, &result));
+	ASSERT_EQ(INT64_MAX, result);
+	ASSERT_TRUE(e::safe_div(INT64_MAX, -1, &result));
+	ASSERT_EQ(INT64_MIN + 1, result);
+	ASSERT_TRUE(e::safe_div(-5, 2, &result));
+	ASSERT_EQ(-3, result);
+	ASSERT_TRUE(e::safe_div(-5, 3, &result));
+	ASSERT_EQ(-2, result);
+	ASSERT_TRUE(e::safe_div(5, -2, &result));
+	ASSERT_EQ(-3, result);
+	ASSERT_TRUE(e::safe_div(5, -3, &result));
+	ASSERT_EQ(-2, result);
 }
 
 TEST(SafeMath, Mod)
 {
-    int64_t result;
-
-    ASSERT_FALSE(e::safe_mod(INT64_MAX, 0, &result));
-
-    ASSERT_TRUE(e::safe_mod(INT64_MAX, INT64_MAX, &result));
-    ASSERT_EQ(0, result);
-    ASSERT_TRUE(e::safe_mod(INT64_MAX, INT64_MIN, &result));
-    ASSERT_EQ(-1, result);
-    ASSERT_TRUE(e::safe_mod(INT64_MIN, INT64_MAX, &result));
-    ASSERT_EQ(INT64_MAX - 1, result);
-    ASSERT_TRUE(e::safe_mod(INT64_MIN, INT64_MIN, &result));
-    ASSERT_EQ(0, result);
-
-    ASSERT_TRUE(e::safe_mod(-5, 2, &result));
-    ASSERT_EQ(1, result);
-
-    ASSERT_TRUE(e::safe_mod(-5, 3, &result));
-    ASSERT_EQ(1, result);
-
-    ASSERT_TRUE(e::safe_mod(5, -2, &result));
-    ASSERT_EQ(-1, result);
-
-    ASSERT_TRUE(e::safe_mod(5, -3, &result));
-    ASSERT_EQ(-1, result);
+	int64_t result;
+	ASSERT_FALSE(e::safe_mod(INT64_MAX, 0, &result));
+	ASSERT_TRUE(e::safe_mod(INT64_MAX, INT64_MAX, &result));
+	ASSERT_EQ(0, result);
+	ASSERT_TRUE(e::safe_mod(INT64_MAX, INT64_MIN, &result));
+	ASSERT_EQ(-1, result);
+	ASSERT_TRUE(e::safe_mod(INT64_MIN, INT64_MAX, &result));
+	ASSERT_EQ(INT64_MAX - 1, result);
+	ASSERT_TRUE(e::safe_mod(INT64_MIN, INT64_MIN, &result));
+	ASSERT_EQ(0, result);
+	ASSERT_TRUE(e::safe_mod(-5, 2, &result));
+	ASSERT_EQ(1, result);
+	ASSERT_TRUE(e::safe_mod(-5, 3, &result));
+	ASSERT_EQ(1, result);
+	ASSERT_TRUE(e::safe_mod(5, -2, &result));
+	ASSERT_EQ(-1, result);
+	ASSERT_TRUE(e::safe_mod(5, -3, &result));
+	ASSERT_EQ(-1, result);
 }
 
 } // namespace

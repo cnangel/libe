@@ -32,104 +32,99 @@
 using e::arena;
 
 arena :: arena()
-    : m_to_free()
-    , m_buffers()
-    , m_start()
-    , m_limit()
+	: m_to_free()
+	, m_buffers()
+	, m_start()
+	, m_limit()
 {
 }
 
 arena :: ~arena()
 {
-    for (size_t i = 0; i < m_to_free.size(); ++i)
-    {
-        free(m_to_free[i]);
-    }
-
-    for (size_t i = 0; i < m_buffers.size(); ++i)
-    {
-        delete m_buffers[i];
-    }
+	for (size_t i = 0; i < m_to_free.size(); ++i)
+	{
+		free(m_to_free[i]);
+	}
+	for (size_t i = 0; i < m_buffers.size(); ++i)
+	{
+		delete m_buffers[i];
+	}
 }
 
 void
 arena :: reserve(size_t sz)
 {
-    if (m_start + sz <= m_limit)
-    {
-        return;
-    }
-
-    unsigned char* tmp = NULL;
-    raw_allocate(sz, &tmp);
-
-    if (tmp)
-    {
-        m_start = tmp;
-        m_limit = m_start + sz;
-    }
+	if (m_start + sz <= m_limit)
+	{
+		return;
+	}
+	unsigned char *tmp = NULL;
+	raw_allocate(sz, &tmp);
+	if (tmp)
+	{
+		m_start = tmp;
+		m_limit = m_start + sz;
+	}
 }
 
 void
-arena :: allocate(size_t sz, char** ptr)
+arena :: allocate(size_t sz, char **ptr)
 {
-    return allocate(sz, reinterpret_cast<unsigned char**>(ptr));
+	return allocate(sz, reinterpret_cast<unsigned char **>(ptr));
 }
 
 void
-arena :: allocate(size_t sz, unsigned char** ptr)
+arena :: allocate(size_t sz, unsigned char **ptr)
 {
-    if (m_start + sz <= m_limit)
-    {
-        *ptr = m_start;
-        m_start += sz;
-    }
-    else
-    {
-        raw_allocate(sz, ptr);
-    }
+	if (m_start + sz <= m_limit)
+	{
+		*ptr = m_start;
+		m_start += sz;
+	}
+	else
+	{
+		raw_allocate(sz, ptr);
+	}
 }
 
 void
-arena :: takeover(char* ptr)
+arena :: takeover(char *ptr)
 {
-    takeover(reinterpret_cast<unsigned char*>(ptr));
+	takeover(reinterpret_cast<unsigned char *>(ptr));
 }
 
 void
-arena :: takeover(unsigned char* ptr)
+arena :: takeover(unsigned char *ptr)
 {
-    m_to_free.push_back(ptr);
+	m_to_free.push_back(ptr);
 }
 
 void
-arena :: takeover(e::buffer* buf)
+arena :: takeover(e::buffer *buf)
 {
-    m_buffers.push_back(buf);
+	m_buffers.push_back(buf);
 }
 
 void
 arena :: clear()
 {
-    for (size_t i = 0; i < m_to_free.size(); ++i)
-    {
-        free(m_to_free[i]);
-    }
-
-    for (size_t i = 0; i < m_buffers.size(); ++i)
-    {
-        delete m_buffers[i];
-    }
+	for (size_t i = 0; i < m_to_free.size(); ++i)
+	{
+		free(m_to_free[i]);
+	}
+	for (size_t i = 0; i < m_buffers.size(); ++i)
+	{
+		delete m_buffers[i];
+	}
 }
 
 void
-arena :: raw_allocate(size_t sz, unsigned char** ptr)
+arena :: raw_allocate(size_t sz, unsigned char **ptr)
 {
-    unsigned char* tmp = reinterpret_cast<unsigned char*>(malloc(sz));
-    *ptr = tmp;
-
-    if (tmp)
-    {
-        m_to_free.push_back(tmp);
-    }
+	unsigned char *tmp = reinterpret_cast<unsigned char *>(malloc(sz));
+	*ptr = tmp;
+	if (tmp)
+	{
+		m_to_free.push_back(tmp);
+	}
 }

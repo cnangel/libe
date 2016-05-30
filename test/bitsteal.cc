@@ -37,40 +37,56 @@ namespace
 
 TEST(BitStealingTest, Strip)
 {
-    uintptr_t v = 0xdeadbeefcafebabeul;
-    uint64_t* p = reinterpret_cast<uint64_t*>(v);
-    p = e::bitsteal::strip(p);
-    v = reinterpret_cast<uintptr_t>(p);
-    ASSERT_EQ(0x0000beefcafebabeul, v);
+	uintptr_t v = 0xdeadbeefcafebabeul;
+	uint64_t *p = reinterpret_cast<uint64_t *>(v);
+	p = e::bitsteal::strip(p);
+	v = reinterpret_cast<uintptr_t>(p);
+	ASSERT_EQ(0x0000beefcafebabeul, v);
 }
 
 TEST(BitStealingTest, SetAndUnset)
 {
-    using e::bitsteal::set;
-    using e::bitsteal::unset;
-    uintptr_t v1 = 0x0000beefcafebabeULL;
-    uint64_t* p1 = reinterpret_cast<uint64_t*>(v1);
-    uintptr_t v2 = 0xffffbeefcafebabeULL;
-    uint64_t* p2 = reinterpret_cast<uint64_t*>(v2);
-    p1 = set(p1, 0); p2 = set(p2, 0);
-    p1 = unset(p1, 1); p2 = unset(p2, 1);
-    p1 = set(p1, 2); p2 = set(p2, 2);
-    p1 = set(p1, 3); p2 = set(p2, 3);
-    p1 = unset(p1, 4); p2 = unset(p2, 4);
-    p1 = set(p1, 5); p2 = set(p2, 5);
-    p1 = unset(p1, 6); p2 = unset(p2, 6);
-    p1 = set(p1, 7); p2 = set(p2, 7);
-    p1 = unset(p1, 8); p2 = unset(p2, 8);
-    p1 = set(p1, 9); p2 = set(p2, 9);
-    p1 = set(p1, 10); p2 = set(p2, 10);
-    p1 = set(p1, 11); p2 = set(p2, 11);
-    p1 = set(p1, 12); p2 = set(p2, 12);
-    p1 = unset(p1, 13); p2 = unset(p2, 13);
-    p1 = set(p1, 14); p2 = set(p2, 14);
-    p1 = set(p1, 15); p2 = set(p2, 15);
-    ASSERT_EQ(p1, p2);
-    ASSERT_EQ(0xdeadbeefcafebabeul, reinterpret_cast<uintptr_t>(p1));
-    ASSERT_EQ(0xdeadbeefcafebabeul, reinterpret_cast<uintptr_t>(p2));
+	using e::bitsteal::set;
+	using e::bitsteal::unset;
+	uintptr_t v1 = 0x0000beefcafebabeULL;
+	uint64_t *p1 = reinterpret_cast<uint64_t *>(v1);
+	uintptr_t v2 = 0xffffbeefcafebabeULL;
+	uint64_t *p2 = reinterpret_cast<uint64_t *>(v2);
+	p1 = set(p1, 0);
+	p2 = set(p2, 0);
+	p1 = unset(p1, 1);
+	p2 = unset(p2, 1);
+	p1 = set(p1, 2);
+	p2 = set(p2, 2);
+	p1 = set(p1, 3);
+	p2 = set(p2, 3);
+	p1 = unset(p1, 4);
+	p2 = unset(p2, 4);
+	p1 = set(p1, 5);
+	p2 = set(p2, 5);
+	p1 = unset(p1, 6);
+	p2 = unset(p2, 6);
+	p1 = set(p1, 7);
+	p2 = set(p2, 7);
+	p1 = unset(p1, 8);
+	p2 = unset(p2, 8);
+	p1 = set(p1, 9);
+	p2 = set(p2, 9);
+	p1 = set(p1, 10);
+	p2 = set(p2, 10);
+	p1 = set(p1, 11);
+	p2 = set(p2, 11);
+	p1 = set(p1, 12);
+	p2 = set(p2, 12);
+	p1 = unset(p1, 13);
+	p2 = unset(p2, 13);
+	p1 = set(p1, 14);
+	p2 = set(p2, 14);
+	p1 = set(p1, 15);
+	p2 = set(p2, 15);
+	ASSERT_EQ(p1, p2);
+	ASSERT_EQ(0xdeadbeefcafebabeul, reinterpret_cast<uintptr_t>(p1));
+	ASSERT_EQ(0xdeadbeefcafebabeul, reinterpret_cast<uintptr_t>(p2));
 }
 
 } // namespace

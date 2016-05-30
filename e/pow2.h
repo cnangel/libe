@@ -39,21 +39,21 @@ namespace e
 inline uint64_t
 next_pow2(uint64_t in)
 {
-    --in;
-    in = (in >> 1) | in;
-    in = (in >> 2) | in;
-    in = (in >> 4) | in;
-    in = (in >> 8) | in;
-    in = (in >> 16) | in;
-    in = (in >> 32) | in;
-    ++in;
-    return in;
+	--in;
+	in = (in >> 1) | in;
+	in = (in >> 2) | in;
+	in = (in >> 4) | in;
+	in = (in >> 8) | in;
+	in = (in >> 16) | in;
+	in = (in >> 32) | in;
+	++in;
+	return in;
 }
 
 inline bool
 is_pow2(uint64_t x)
 {
-    return ((x != 0) && !(x & (x - 1)));
+	return ((x != 0) && !(x & (x - 1)));
 }
 
 } // namespace e
